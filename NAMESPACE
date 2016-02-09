@@ -1,0 +1,18 @@
+exportPattern("^[[:alpha:]]+")
+# Import required packages:
+import(stats)
+import(Rcpp)
+import(sas7bdat)
+import(mice) 
+import(tools)
+import(nloptr)
+importFrom("utils", "head", "read.csv", "tail")
+#Export R-functions:
+export(prepare_data)
+export(spm_discrete)
+export(spm_continuous)
+export(simdata_cont)
+export(simdata_discr)
+export(spm_time_dep)
+export(simdata_time_dep)
+useDynLib(stpm)
