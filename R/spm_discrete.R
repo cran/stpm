@@ -3,11 +3,10 @@
 #'for Nonlinear Analysis of Longitudinal Data. Mathematical Population Studies, 12(2), pp.: 51-80.
 #'<DOI:10.1080/08898480590932296>.
 #'@param dat A data table.
-#'@param k A number of dimensions.
 #'@param theta_range A range of theta parameter (axe displacement of Gompertz function), default: from 0.001 to 0.09 with step of 0.001.
 #'@param tol A tolerance threshold for matrix inversion (NULL by default).
 #'@param verbose An indicator of verbosing output.
-#'@return A list of two elements: (1) estimated parameters u, R, b, Sigma, Q, mu0, theta and
+#'@return A list of two elements ("Ak205", "Ya2007"): (1) estimated parameters u, R, b, Sigma, Q, mu0, theta and
 #'(2) estimated parameters a, f1, Q, f, b, mu0, theta. Note: b and mu0 from first list are different 
 #'from b and mu0 from the second list.
 #'@details This function is way much faster that continuous \code{spm_continuous_MD(...)} (but less precise) and used mainly in 
@@ -19,12 +18,16 @@
 #'pars <- spm_discrete(data)
 #'pars
 #'
-spm_discrete <- function(dat,k=1, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verbose=FALSE) {
+spm_discrete <- function(dat, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verbose=FALSE) {
+  
+  k <- (dim(dat)[2] - 4)/2
+  
   options(digits=10)
   # Logistic regression:
   total_cols <- (1 + k + (k*(k+1))/2) + 2
   result <- matrix(nrow=0, ncol=total_cols,0)
   for(theta in theta_range) {
+    #theta = 0.1
     ethetat <- exp(theta*dat[,3])
     newdat <- dat[,2] # Outcome
     newdat <- cbind(newdat,ethetat) #x0
@@ -39,23 +42,27 @@ spm_discrete <- function(dat,k=1, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, 
       index_i <- index_i + 1
     }
     
+    
     index_i <- 1
     index_j <- 1
     for(i in seq(1,(k*2-1),2)) {
       for(j in seq(i,(k*2-1),2)) {
-        newdat <- cbind(newdat,dat[,(4+i)]*dat[,(4+j)]*ethetat)
+        if(i != j) {
+          c.dat <- 2*dat[,(4+i)]*dat[,(4+j)]*ethetat
+        } else {
+          c.dat <- dat[,(4+i)]*dat[,(4+j)]*ethetat
+        }
+        newdat <- cbind(newdat,c.dat)
         cnames <- c(cnames,paste("x2","_", index_i,"_",index_j,sep=''))
         index_j <- index_j + 1
       }
       index_i <- index_i + 1
-      index_j <- index_i
+      index_j <- 1
     }
     
     colnames(newdat) <- cnames
     
-    #reg_formula <- paste("1 -", cnames[1],"~", paste(cnames[2:length(cnames)],collapse='+'))
     reg_formula <- as.formula(paste("1 -", cnames[1],"~", paste(cnames[2:length(cnames)],collapse='+'), "- 1"))
-    
     
     res.pois <- glm(reg_formula, data=as.data.frame(newdat), family = poisson(link=log), 
                     control=list(maxit = 250, trace=verbose))
@@ -77,8 +84,8 @@ spm_discrete <- function(dat,k=1, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, 
 
   parameters_glm <- result[which(result[,total_cols] == max(result[,total_cols])),]
   names(parameters_glm) <- c("theta", cnames[2:length(cnames)], "Log Lik")
-
-  # Least-square:
+  
+  ## Least-square:
   index_i <- 1
   index_j <- 1
   parameters_lsq <- matrix(nrow=0,ncol=(k+3))
@@ -124,7 +131,7 @@ spm_discrete <- function(dat,k=1, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, 
   }
   for(i in 1:k) {
     for(j in i:k) {
-      Q[i,j] <- abs(Q[i,j])
+      #Q[i,j] <- abs(Q[i,j])
       Q[j,i] <- Q[i,j]
     }
   }
@@ -146,7 +153,8 @@ spm_discrete <- function(dat,k=1, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, 
   thetaH <- theta
   pars2 <- list(a=aH, f1=f1H, Q=QH, f=fH, b=bH, mu0=mu0H, theta=thetaH)
   
-  pars <- list(pars1=pars1, pars2=pars2)
+  pars <- list(Ak2005=pars1, Ya2007=pars2)
+  class(pars) <- "spm.discrete"
   invisible(pars)
 }
 

@@ -4,13 +4,11 @@
 \alias{spm_discrete}
 \title{Discrete multi-dimensional optimization}
 \usage{
-spm_discrete(dat, k = 1, theta_range = seq(0.02, 0.2, by = 0.001),
-  tol = NULL, verbose = FALSE)
+spm_discrete(dat, theta_range = seq(0.02, 0.2, by = 0.001), tol = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{dat}{A data table.}
-
-\item{k}{A number of dimensions.}
 
 \item{theta_range}{A range of theta parameter (axe displacement of Gompertz function), default: from 0.001 to 0.09 with step of 0.001.}
 
@@ -19,7 +17,7 @@ spm_discrete(dat, k = 1, theta_range = seq(0.02, 0.2, by = 0.001),
 \item{verbose}{An indicator of verbosing output.}
 }
 \value{
-A list of two elements: (1) estimated parameters u, R, b, Sigma, Q, mu0, theta and
+A list of two elements ("Ak205", "Ya2007"): (1) estimated parameters u, R, b, Sigma, Q, mu0, theta and
 (2) estimated parameters a, f1, Q, f, b, mu0, theta. Note: b and mu0 from first list are different 
 from b and mu0 from the second list.
 }

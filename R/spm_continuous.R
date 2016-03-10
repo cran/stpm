@@ -11,25 +11,25 @@ setlb <- function(k, params) {
   # Setting boundaries for coefficients:
   # aH
   start=1; end=k^2
-  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){ params[n] + ifelse(params[n] > 0, -0.5*params[n], 0.5*params[n]) }))) 
+  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){ params[n] + ifelse(params[n] > 0, -0.1*params[n], 0.1*params[n]) }))) 
   # f1H
   start=end+1; end=start+k-1
-  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){ params[n] + ifelse(params[n] > 0, -0.05*params[n], 0.05*params[n]) }))) 
+  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){ params[n] + ifelse(params[n] > 0, -0.1*params[n], 0.1*params[n]) }))) 
   # QH
   start=end+1; end=start+k^2-1
-  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){ ifelse(params[n] > 0, 0, params[n]+0.05*params[n]) })))
+  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){ ifelse(params[n] > 0, 0, params[n]+0.1*params[n]) })))
   # fH
   start=end+1; end=start+k-1
-  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){ params[n] + ifelse(params[n] > 0, -0.05*params[n], 0.05*params[n]) })) )
+  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){ params[n] + ifelse(params[n] > 0, -0.1*params[n], 0.1*params[n]) })) )
   # bH
   start=end+1; end=start+k-1
-  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){params[n] + ifelse(params[n] > 0, -0.05*params[n], 0.05*params[n]) })) )
+  lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){params[n] + ifelse(params[n] > 0, -0.1*params[n], 0.1*params[n]) })) )
   # mu0
   start=end+1; end=start
-  lower_bound <- c( lower_bound, 1e-7 )
+  lower_bound <- c( lower_bound, params[start:end] - 0.1*params[start:end])
   # theta
   start=end+1; end=start
-  lower_bound <- c( lower_bound, 1e-6 )
+  lower_bound <- c( lower_bound, params[start:end] - 0.1*params[start:end])
   
   lower_bound
 }
@@ -47,25 +47,25 @@ setub <- function(k, params) {
   # Setting boundaries for coefficients:
   # aH
   start=1; end=k^2
-  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n] + 0.5*params[n], 0*params[n]) })))
+  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n] + 0.1*params[n], 0*params[n]) })))
   # f1H
   start=end+1; end=start+k-1
-  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n] + 0.05*params[n], params[n]- 0.05*params[n]) })))
+  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n] + 0.1*params[n], params[n]- 0.1*params[n]) })))
   # QH
   start=end+1; end=start+k^2-1
-  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n) {ifelse(params[n] > 0, params[n] + 0.5*params[n], params[n]-0.5*params[n] )})))
+  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n) {ifelse(params[n] > 0, params[n] + 0.1*params[n], params[n]-0.1*params[n] )})))
   # fH
   start=end+1; end=start+k-1
-  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n]+0.05*params[n], params[n]-0.05*params[n]) })))
+  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n]+0.1*params[n], params[n]-0.1*params[n]) })))
   # bH
   start=end+1; end=start+k-1
-  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n]+0.05*params[n], params[n]-0.05*params[n]) })))
+  upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n]+0.1*params[n], params[n]-0.1*params[n]) })))
   # mu0
   start=end+1; end=start
-  upper_bound <- c( upper_bound, 0.1 )
+  upper_bound <- c( upper_bound, params[start:end] + 0.1*params[start:end])
   # theta
   start=end+1; end=start
-  upper_bound <- c( upper_bound, 0.5 )
+  upper_bound <- c( upper_bound, params[start:end] + 0.1*params[start:end])
   
   upper_bound
 }
@@ -83,12 +83,17 @@ setub <- function(k, params) {
 #'@param b A starting value of a diffusion coefficient representing a strength of the random disturbance from Wiener Process.
 #'@param mu0 A starting value of the baseline hazard.
 #'@param theta A starting value of the parameter theta (axe displacement of Gompertz function).
-#'@param k A number of variables (dimension).
 #'@param verbose An indicator of verbosing output.
 #'@param stopifbound Estimation stops if at least one parameter achieves lower or upper boundaries.
-#'@param algorithm An optimization algorithm used, can be one of those: NLOPT_LN_NEWUOA,NLOPT_LN_NEWUOA_BOUND or NLOPT_LN_NELDERMEAD. Default: NLOPT_LN_NELDERMEAD
+#'@param algorithm An optimization algorithm used, can be one of those provided by \code{nloptr}. 
+#'#'Check the NLopt website for a description of
+#'the algorithms. Default: NLOPT_LN_COBYLA
 #'@param lb Lower bound of parameters under estimation.
 #'@param ub Upper bound of parameters under estimation.
+#'@param maxeval Maximum number of iterations of the algorithm for \code{nloptr} optimization. 
+#'The program stops when the number of function evaluations exceeds maxeval. Default: 500.
+#'@param pinv.tol A tolerance value for pseudo-inverse of matrix gamma (see Yashin, A.I. et al (2007). Stochastic model for analysis of longitudinal data on aging 
+#'and mortality. Mathematical Biosciences, 208(2), 538-551.<DOI:10.1016/j.mbs.2006.11.006>.)
 #'@return A set of estimated parameters a, f1, Q, f, b, mu0, theta and
 #'additional variable \code{limit} which indicates if any parameter 
 #'achieved lower or upper boundary conditions (FALSE by default).
@@ -99,8 +104,8 @@ setub <- function(k, params) {
 #'data <- simdata_cont(N=2)
 #'head(data)
 #'#Parameters estimation:
-#'pars <- spm_continuous(dat=data[,2:6],a=-0.05, f1=80, 
-#'						 Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08, k = 1)
+#'pars <- spm_continuous(dat=data,a=-0.05, f1=80, 
+#'						 Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08)
 #'pars
 #'
 spm_continuous <- function(dat, 
@@ -111,29 +116,68 @@ spm_continuous <- function(dat,
                            b=5,
                            mu0=2e-5,
                            theta=0.08,
-                           k=1, 
                            stopifbound=FALSE, 
-                           algorithm="NLOPT_LN_NELDERMEAD",
+                           algorithm="NLOPT_LN_COBYLA",
                            lb=NULL, ub=NULL,
-                           verbose=FALSE) {
+                           maxeval=500,
+                           verbose=FALSE,
+                           pinv.tol=0.01) {
   
-  avail_algorithms <- c("NLOPT_GN_DIRECT_L_RAND",
-                        "NLOPT_LN_NEWUOA",
-                        "NLOPT_LN_NEWUOA_BOUND",
-                        "NLOPT_LN_NELDERMEAD")
+  ###=======For DEBUG========###
+  #dat = dat
+  #
+  #a=matrix(c(-0.05,  0.001, 0.001, -0.05), nrow = 2, ncol = 2, byrow = T)
+  #f1=t(matrix(c(100, 200), nrow = 2, ncol = 1, byrow = F))
+  #Q=matrix(c(1e-06, 1e-7, 1e-7,  1e-06), nrow = 2, ncol = 2, byrow = T)
+  #f=t(matrix(c(100, 200), nrow = 2, ncol = 1, byrow = F))
+  #b=matrix(c(2, 5), nrow = 2, ncol = 1, byrow = F)
+  #mu0=1e-4
+  #theta=0.08
+  #k=2
+  #
+  #stopifbound=FALSE
+  #algorithm="NLOPT_LN_NELDERMEAD"
+  #lb=NULL
+  #ub=NULL
+  #verbose=FALSE
+  ###=========================###
+  
+  
+  
+  avail_algorithms <- c("NLOPT_GN_DIRECT", "NLOPT_GN_DIRECT_L",
+                        "NLOPT_GN_DIRECT_L_RAND", "NLOPT_GN_DIRECT_NOSCAL",
+                        "NLOPT_GN_DIRECT_L_NOSCAL",
+                        "NLOPT_GN_DIRECT_L_RAND_NOSCAL",
+                        "NLOPT_GN_ORIG_DIRECT", "NLOPT_GN_ORIG_DIRECT_L",
+                        "NLOPT_GD_STOGO", "NLOPT_GD_STOGO_RAND",
+                        "NLOPT_LD_SLSQP", "NLOPT_LD_LBFGS_NOCEDAL",
+                        "NLOPT_LD_LBFGS", "NLOPT_LN_PRAXIS", "NLOPT_LD_VAR1",
+                        "NLOPT_LD_VAR2", "NLOPT_LD_TNEWTON",
+                        "NLOPT_LD_TNEWTON_RESTART",
+                        "NLOPT_LD_TNEWTON_PRECOND",
+                        "NLOPT_LD_TNEWTON_PRECOND_RESTART",
+                        "NLOPT_GN_CRS2_LM", "NLOPT_GN_MLSL", "NLOPT_GD_MLSL",
+                        "NLOPT_GN_MLSL_LDS", "NLOPT_GD_MLSL_LDS",
+                        "NLOPT_LD_MMA", "NLOPT_LN_COBYLA", "NLOPT_LN_NEWUOA",
+                        "NLOPT_LN_NEWUOA_BOUND", "NLOPT_LN_NELDERMEAD",
+                        "NLOPT_LN_SBPLX", "NLOPT_LN_AUGLAG", "NLOPT_LD_AUGLAG",
+                        "NLOPT_LN_AUGLAG_EQ", "NLOPT_LD_AUGLAG_EQ",
+                        "NLOPT_LN_BOBYQA", "NLOPT_GN_ISRES")
   
   if(!(algorithm %in% avail_algorithms)) {
-  #  stop(cat("Provided algorithm", algorithm, "not in the list of available optimization methods."))
+    stop(cat("Provided algorithm", algorithm, "not in the list of available optimization methods."))
   }
   
-  dat <<- as.matrix(dat)
+  dat <- as.matrix(dat[, 2:dim(dat)[2]])
+  
+  k <- dim(as.matrix(a))[1]
   final_res <- list()
   
   if(mu0 < 0) {mu0 <- 0}
   
-  parameters <- c(a, f1, Q, f, b, mu0, theta)
+  parameters <- c(t(a), f1, t(Q), f, b, mu0, theta)
   # Current results:
-  results <- list(a=NULL, f1=NULL, Q=NULL, f=NULL, b=NULL, mu0=NULL, theta=NULL)
+  #results <- list(a=NULL, f1=NULL, Q=NULL, f=NULL, b=NULL, mu0=NULL, theta=NULL)
   results_tmp <- list(a=NULL, f1=NULL, Q=NULL, f=NULL, b=NULL, mu0=NULL, theta=NULL)
   iteration <- 0
   
@@ -152,35 +196,35 @@ spm_continuous <- function(dat,
   }
   
   # Reading parameters:
-  start=1; end=k^2
-  a <- matrix(parameters[start:end],ncol=k, nrow=k, byrow=T)
-  results$a <- a
-  #print(results$a)
-  start=end+1; end=start+k-1
-  f1 <- matrix(parameters[start:end],ncol=1, nrow=k, byrow=T)
-  results$f1 <- f1
-  #print(results$f1)
-  start=end+1; end=start+k^2-1
-  Q <- matrix(parameters[start:end],ncol=k, nrow=k, byrow=T)
-  results$Q <- Q
-  #print(results$Q)
-  start=end+1; end=start+k-1
-  f <- matrix(parameters[start:end],ncol=1, nrow=k, byrow=F)
-  results$f <- f
-  #print(results$f)
-  start=end+1; end=start+k-1
-  b <- matrix(parameters[start:end],nrow=k, ncol=1, byrow=F)
-  results$b <- b
-  #print(results$b)
-  start=end+1; end=start
-  mu0 <- parameters[start:end]
-  results$mu0 <- mu0
-  #print(results$mu0)
-  start=end+1; end=start
-  theta <- parameters[start:end]
-  results$theta <- theta
-  #print(results$theta)
-  # End of reading parameters
+  #start=1; end=k^2
+  #a <- matrix(parameters[start:end],ncol=k, nrow=k, byrow=T)
+  #results$a <- a
+  ##print(results$a)
+  #start=end+1; end=start+k-1
+  #f1 <- matrix(parameters[start:end],ncol=1, nrow=k, byrow=T)
+  #results$f1 <- f1
+  ##print(results$f1)
+  #start=end+1; end=start+k^2-1
+  #Q <- matrix(parameters[start:end],ncol=k, nrow=k, byrow=T)
+  #results$Q <- Q
+  ##print(results$Q)
+  #start=end+1; end=start+k-1
+  #f <- matrix(parameters[start:end],ncol=1, nrow=k, byrow=F)
+  #results$f <- f
+  ##print(results$f)
+  #start=end+1; end=start+k-1
+  #b <- matrix(parameters[start:end],nrow=k, ncol=1, byrow=F)
+  #results$b <- b
+  ##print(results$b)
+  #start=end+1; end=start
+  #mu0 <- parameters[start:end]
+  #results$mu0 <- mu0
+  ##print(results$mu0)
+  #start=end+1; end=start
+  #theta <- parameters[start:end]
+  #results$theta <- theta
+  ##print(results$theta)
+  ## End of reading parameters
   
   maxlik <- function(par) {
     
@@ -212,7 +256,7 @@ spm_continuous <- function(dat,
     if(stopifbound) {
       for(i in 1:length(results_tmp)) {
         if(length(intersect(results_tmp[[i]],c(bounds$lower_bound[i], bounds$upper_bound[i]))) >= 1) {
-          cat("Parameter", names(results)[i], "achieved lower/upper bound. Process stopped.\n")
+          cat("Parameter", names(results_tmp)[i], "achieved lower/upper bound. Process stopped.\n")
           cat(results_tmp[[i]],"\n")
           stopflag <- T
           break
@@ -222,7 +266,7 @@ spm_continuous <- function(dat,
     
     if(stopflag == FALSE) {
       dims <- dim(dat)
-      res <<- .Call("complikMD", dat, dims[1], dims[2], a, f1, Q, b, f, mu0, theta, k)
+      res <- .Call("complikMD", dat, dims[1], dims[2], a, f1, Q, b, f, mu0, theta, k, pinv.tol)
       assign("results", results_tmp, envir=baseenv())
       iteration <<- iteration + 1
       if(verbose) {
@@ -233,8 +277,7 @@ spm_continuous <- function(dat,
       
     }
     
-    res <- -1*res
-    res
+    return(as.numeric(-1*res))
   }
 
   # Optimization:
@@ -244,16 +287,18 @@ spm_continuous <- function(dat,
     cat("Upper bound:\n")
     print(bounds$upper_bound)
   }
-  tryCatch({ans <- nloptr(x0 = parameters, 
-                 eval_f = maxlik, opts = list("algorithm"=algorithm, 
-                                              "xtol_rel"=1.0e-6, "maxeval"=5000),
-                 lb = bounds$lower_bound, ub = bounds$upper_bound)
-            
-           },  
-           error=function(e) {if(verbose  == TRUE) {print(e)}}, 
-           finally=NA)
+  #tryCatch({ans <- nloptr(x0 = parameters, 
+  #               eval_f = maxlik, opts = list("algorithm"=algorithm, 
+  #                                            "xtol_rel"=1.0e-1, "maxeval"=maxeval),
+  #               lb = bounds$lower_bound, ub = bounds$upper_bound)
+  #          
+  #         },  
+  #         error=function(e) {if(verbose  == TRUE) {print(e)}}, 
+  #         finally=NA)
   
-  
+  nloptr(x0 = parameters, 
+  		 eval_f = maxlik, opts = list("algorithm"=algorithm, "xtol_rel"=1.0e-4, "maxeval"=maxeval),
+         lb = bounds$lower_bound, ub = bounds$upper_bound)
   
   final_results <- get("results",envir=baseenv())
   
@@ -267,7 +312,8 @@ spm_continuous <- function(dat,
     }
   }
   final_results$limit <- limit
-  
+  #assign("results", final_results, envir=baseenv())
+  class(final_results) <- "spm.continuous"
   invisible(final_results)
 }
 

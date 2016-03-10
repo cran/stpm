@@ -4,7 +4,10 @@
 \alias{spm}
 \title{A central function that estimates Stochastic Process Model parameters a from given dataset.}
 \usage{
-spm(x, model = "discrete", formulas = NULL, verbose = FALSE, tol = NULL)
+spm(x, model = "discrete", formulas = NULL, tol = NULL,
+  stopifbound = FALSE, algorithm = "NLOPT_LN_NELDERMEAD", lb = NULL,
+  ub = NULL, maxeval = 100, pinv.tol = 0.01, theta.range = seq(0.01,
+  0.2, by = 0.001), verbose = FALSE)
 }
 \arguments{
 \item{x}{A dataset: is the output from prepare_data(...) function and consists of two separate data tables:
@@ -14,9 +17,27 @@ spm(x, model = "discrete", formulas = NULL, verbose = FALSE, tol = NULL)
 
 \item{formulas}{A list of parameter formulas used in the "time-dependent" model.}
 
-\item{verbose}{A verbosing output indicator (FALSE by default).}
-
 \item{tol}{A tolerance threshold for matrix inversion (NULL by default).}
+
+\item{stopifbound}{A flag (default=FALSE) if it is set then the optimization stops 
+when any of the parametrs achives lower or upper boundary.}
+
+\item{algorithm}{An optimization algorithm used in \code{nloptr} package.
+Default: \code{NLOPTR_NL_NELDERMEAD}.}
+
+\item{lb}{Lower boundary, default \code{NULL}.}
+
+\item{ub}{Upper boundary, default \code{NULL}.}
+
+\item{maxeval}{Maximum number of evaluations of optimization algorithm. 
+Default 100.}
+
+\item{pinv.tol}{A tolerance threshold for matrix pseudo-inverse. Default: 0.01.}
+
+\item{theta.range}{A user-defined range of the parameter \code{theta} used in 
+discrete-time optimization and estimating of starting point for continuous-time optimization.}
+
+\item{verbose}{A verbosing output indicator (FALSE by default).}
 }
 \value{
 For "discrete" and "continuous" model types: 

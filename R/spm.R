@@ -10,8 +10,19 @@
 #'(1) a data table for continuous-time model and (2) a data table for discrete-time model.
 #'@param model A model type. Choices are: "discrete", "continuous" or "time-dependent".
 #'@param formulas A list of parameter formulas used in the "time-dependent" model.
-#'@param verbose A verbosing output indicator (FALSE by default).
 #'@param tol A tolerance threshold for matrix inversion (NULL by default).
+#'@param stopifbound A flag (default=FALSE) if it is set then the optimization stops 
+#'when any of the parametrs achives lower or upper boundary.
+#'@param algorithm An optimization algorithm used in \code{nloptr} package.
+#'Default: \code{NLOPTR_NL_NELDERMEAD}.
+#'@param lb Lower boundary, default \code{NULL}.
+#'@param ub Upper boundary, default \code{NULL}.
+#'@param maxeval Maximum number of evaluations of optimization algorithm. 
+#'Default 100.
+#'@param pinv.tol A tolerance threshold for matrix pseudo-inverse. Default: 0.01.
+#'@param theta.range A user-defined range of the parameter \code{theta} used in 
+#'discrete-time optimization and estimating of starting point for continuous-time optimization.
+#'@param verbose A verbosing output indicator (FALSE by default).
 #'@return For "discrete" and "continuous" model types: 
 #'(1) a list of model parameter estimates for the discrete model type described in 
 #'"Life tables with covariates: Dynamic Model for Nonlinear Analysis of Longitudinal Data", 
@@ -39,7 +50,12 @@
 #'p.td.model <- spm(data, model="time-dependent")
 #'p.td.model
 #'}
-spm <- function(x, model="discrete", formulas = NULL, verbose=FALSE, tol=NULL) {
+spm <- function(x, model="discrete", formulas = NULL, tol=NULL, 
+                stopifbound=FALSE, algorithm="NLOPT_LN_NELDERMEAD", 
+                lb=NULL, ub=NULL, maxeval=100,
+                pinv.tol = 0.01,
+                theta.range=seq(0.01, 0.2, by=0.001),
+                verbose=FALSE) {
   
   # List of available models:
   models <- c("discrete", "continuous", "time-dependent")
@@ -54,63 +70,67 @@ spm <- function(x, model="discrete", formulas = NULL, verbose=FALSE, tol=NULL) {
   
   if(model == "discrete") {
     # Estimation of starting point with discrete optimization:
-    pars <- spm_discrete(dat=x[[2]],k=k, verbose = verbose, tol = tol)
-    res <- list(Ak2005=list(u=pars$pars1$u, 
-                            R=pars$pars1$R, 
-                            b=pars$pars1$b, 
-                            Q=pars$pars1$Q, 
-                            Sigma=pars$pars1$Sigma,
-                            mu0=pars$pars1$mu0,
-                            theta=pars$pars1$theta), 
-                Ya2007=list(a=pars$pars2$a, 
-                            f1=pars$pars2$f1,
-                            Q=pars$pars2$Q,
-                            f=pars$pars2$f, 
-                            b=pars$pars2$b, 
-                            mu0=pars$pars2$mu0, 
-                            theta=pars$pars2$theta))
+    pars <- spm_discrete(dat=x[[2]],verbose = verbose, tol = tol, theta_range=theta.range)
+    res <- list(Ak2005=list(u=pars$Ak2005$u, 
+                            R=pars$Ak2005$R, 
+                            b=pars$Ak2005$b, 
+                            Q=pars$Ak2005$Q, 
+                            Sigma=pars$Ak2005$Sigma,
+                            mu0=pars$Ak2005$mu0,
+                            theta=pars$Ak2005$theta), 
+                Ya2007=list(a=pars$Ya2007$a, 
+                            f1=pars$Ya2007$f1,
+                            Q=pars$Ya2007$Q,
+                            f=pars$Ya2007$f, 
+                            b=pars$Ya2007$b, 
+                            mu0=pars$Ya2007$mu0, 
+                            theta=pars$Ya2007$theta))
     
   }
   
   
   if(model == "continuous") {
-    pars <- spm_discrete(dat=x[[2]],k=k, verbose = verbose, tol = tol)
-    data <- data.frame(x[[1]][,2:dim(x[[1]])[2]])
+    pars <- spm_discrete(dat=x[[2]],verbose = verbose, tol = tol)
+    data <- data.frame(x[[1]])
   
     if(verbose) {
       cat("Starting parameters:\n")
       print(pars)
     }
     
-    if(det(pars$pars2$Q) < 0) {
+    if(det(pars$Ya2007$Q) < 0) {
       cat("Error: determinant of Q < 0\n")
       cat("Q:\n")
-      print(pars$pars2$Q)
+      print(pars$Ya2007$Q)
       cat("Det(Q):\n")
-      print(det(pars$pars2$Q))
+      print(det(pars$Ya2007$Q))
       
       res <- NA
     
     } else {
-      spm_continuous(as.matrix(data), 
-                    a=pars$pars2$a, 
-                    f1=pars$pars2$f1, 
-                    Q=pars$pars2$Q, 
-                    f=pars$pars2$f, 
-                    b=pars$pars2$b, 
-                    mu0=pars$pars2$mu0, 
-                    theta=pars$pars2$theta, 
-                    k, 
-                    verbose)
+      res.t <- spm_continuous(as.matrix(data), 
+                    a=pars$Ya2007$a, 
+                    f1=pars$Ya2007$f1, 
+                    Q=pars$Ya2007$Q, 
+                    f=pars$Ya2007$f, 
+                    b=pars$Ya2007$b, 
+                    mu0=pars$Ya2007$mu0, 
+                    theta=pars$Ya2007$theta, 
+                    stopifbound = stopifbound,
+                    algorithm = algorithm, 
+                    lb = lb, ub = ub,
+                    maxeval = maxeval, 
+                    pinv.tol = pinv.tol,
+                    verbose = verbose)
   
-      res.t <- get("results",envir=.GlobalEnv)
+      #res.t <- get("results",envir=.GlobalEnv)
       
       Q.c <- res.t$Q
       R.c <- res.t$a + diag(k)
       Sigma.c <- as.matrix(res.t$b)
-      u.c <- (-1)*(res.t$f1 %*% res.t$a)
-      b.c <- -2*res.t$f %*% res.t$Q
-      mu0.c <- res.t$mu0 + res.t$f %*% res.t$Q %*% t(res.t$f)
+      u.c <- (-1)*(t(res.t$f1) %*% res.t$a)
+      b.c <- -2*t(res.t$f) %*% res.t$Q
+      mu0.c <- res.t$mu0 + t(res.t$f) %*% res.t$Q %*% res.t$f
       theta.c <- res.t$theta
       
       res <- list(Ak2005=list(u=u.c, 
@@ -132,7 +152,6 @@ spm <- function(x, model="discrete", formulas = NULL, verbose=FALSE, tol=NULL) {
   }
   
   if(model == "time-dependent") {
-    data <- x[[1]][,2:dim(x[[1]])[2]]
     
     if(k > 1) {
       stop("Number of variables > 1. Model with time-dependent parameters can be used only with one variable!")
@@ -150,15 +169,17 @@ spm <- function(x, model="discrete", formulas = NULL, verbose=FALSE, tol=NULL) {
       }
     }
     
-    pars <- spm_discrete(dat=x[[2]],k=k)
-    
-    res.t <- spm_time_dep(x[[1]][,2:dim(x[[1]])[2]], 
+    # Raw parameters estimates
+    pars <- spm_discrete(dat=x[[2]],verbose = verbose, tol = tol, theta_range=theta.range)
+    # Parameter optimization for time-dependent model
+    res <- spm_time_dep(x[[1]], 
                             f = formulas.work,
-                            start=list(a=pars$pars2$a, f1=pars$pars2$f1, Q=pars$pars2$Q, f=pars$pars2$f, b=pars$pars2$b, mu0=pars$pars2$mu0))
+                            start=list(a=pars$Ya2007$a, f1=pars$Ya2007$f1, 
+                                       Q=pars$Ya2007$Q, f=pars$Ya2007$f, 
+                                       b=pars$Ya2007$b, mu0=pars$Ya2007$mu0))
     
-    res <- get("results",envir=.GlobalEnv)
-  
+    #res <- get("results",envir=.GlobalEnv)
   }
-  
+  class(res) <- "spm"
   invisible(res)
 }

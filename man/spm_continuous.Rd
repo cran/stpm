@@ -5,9 +5,9 @@
 \title{Continuous multi-dimensional optimization}
 \usage{
 spm_continuous(dat, a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5,
-  mu0 = 2e-05, theta = 0.08, k = 1, stopifbound = FALSE,
-  algorithm = "NLOPT_LN_NELDERMEAD", lb = NULL, ub = NULL,
-  verbose = FALSE)
+  mu0 = 2e-05, theta = 0.08, stopifbound = FALSE,
+  algorithm = "NLOPT_LN_COBYLA", lb = NULL, ub = NULL, maxeval = 500,
+  verbose = FALSE, pinv.tol = 0.01)
 }
 \arguments{
 \item{dat}{A data table.}
@@ -26,17 +26,23 @@ spm_continuous(dat, a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5,
 
 \item{theta}{A starting value of the parameter theta (axe displacement of Gompertz function).}
 
-\item{k}{A number of variables (dimension).}
-
 \item{stopifbound}{Estimation stops if at least one parameter achieves lower or upper boundaries.}
 
-\item{algorithm}{An optimization algorithm used, can be one of those: NLOPT_LN_NEWUOA,NLOPT_LN_NEWUOA_BOUND or NLOPT_LN_NELDERMEAD. Default: NLOPT_LN_NELDERMEAD}
+\item{algorithm}{An optimization algorithm used, can be one of those provided by \code{nloptr}. 
+#'Check the NLopt website for a description of
+the algorithms. Default: NLOPT_LN_COBYLA}
 
 \item{lb}{Lower bound of parameters under estimation.}
 
 \item{ub}{Upper bound of parameters under estimation.}
 
+\item{maxeval}{Maximum number of iterations of the algorithm for \code{nloptr} optimization. 
+The program stops when the number of function evaluations exceeds maxeval. Default: 500.}
+
 \item{verbose}{An indicator of verbosing output.}
+
+\item{pinv.tol}{A tolerance value for pseudo-inverse of matrix gamma (see Yashin, A.I. et al (2007). Stochastic model for analysis of longitudinal data on aging 
+and mortality. Mathematical Biosciences, 208(2), 538-551.<DOI:10.1016/j.mbs.2006.11.006>.)}
 }
 \value{
 A set of estimated parameters a, f1, Q, f, b, mu0, theta and
@@ -55,8 +61,8 @@ library(stpm)
 data <- simdata_cont(N=2)
 head(data)
 #Parameters estimation:
-pars <- spm_continuous(dat=data[,2:6],a=-0.05, f1=80, 
-					 Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08, k = 1)
+pars <- spm_continuous(dat=data,a=-0.05, f1=80, 
+					 Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08)
 pars
 
 }
