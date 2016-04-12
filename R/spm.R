@@ -10,6 +10,7 @@
 #'(1) a data table for continuous-time model and (2) a data table for discrete-time model.
 #'@param model A model type. Choices are: "discrete", "continuous" or "time-dependent".
 #'@param formulas A list of parameter formulas used in the "time-dependent" model.
+#'@param start A starting values of coefficients in the "time-dependent" model.
 #'@param tol A tolerance threshold for matrix inversion (NULL by default).
 #'@param stopifbound A flag (default=FALSE) if it is set then the optimization stops 
 #'when any of the parametrs achives lower or upper boundary.
@@ -47,10 +48,12 @@
 #'data <- prepare_data(x=system.file("data","longdat.csv",package="stpm"), 
 #'					   y=system.file("data","vitstat.csv",package="stpm"), 
 #'					   covariates="BMI")
-#'p.td.model <- spm(data, model="time-dependent")
+#'p.td.model <- spm(data, model="time-dependent",
+#'                  f=list(at="aa*t+bb", f1t="f1", Qt="Q", ft="f", bt="b", mu0t="mu0"),
+#'                  start=list(a=-0.001, bb=0.05, f1=80, Q=2e-8, f=80, b=5, mu0=1e-3))
 #'p.td.model
 #'}
-spm <- function(x, model="discrete", formulas = NULL, tol=NULL, 
+spm <- function(x, model="discrete", formulas = NULL, start=NULL, tol=NULL, 
                 stopifbound=FALSE, algorithm="NLOPT_LN_NELDERMEAD", 
                 lb=NULL, ub=NULL, maxeval=100,
                 pinv.tol = 0.01,
@@ -161,22 +164,19 @@ spm <- function(x, model="discrete", formulas = NULL, tol=NULL,
     #  stop("It must be 6 equations for corresponding coefficients.")
     #}
     
-    formulas.work = list(at="a", f1t="f1", Qt="Q", ft="f", bt="b", mu0t="mu0")
-    
-    if(!is.null(formulas)) {
-      for(item in formulas) {
-        formulas.work[[item]] <- formulas[[item]]
-      }
+    # Raw parameters estimates
+    #pars <- spm_discrete(dat=x[[2]],verbose = verbose, tol = tol, theta_range=theta.range)
+    # Parameter optimization for time-dependent model
+    if(is.null(start)) {
+      stop("Specify starting values.")
     }
     
-    # Raw parameters estimates
-    pars <- spm_discrete(dat=x[[2]],verbose = verbose, tol = tol, theta_range=theta.range)
-    # Parameter optimization for time-dependent model
     res <- spm_time_dep(x[[1]], 
-                            f = formulas.work,
-                            start=list(a=pars$Ya2007$a, f1=pars$Ya2007$f1, 
-                                       Q=pars$Ya2007$Q, f=pars$Ya2007$f, 
-                                       b=pars$Ya2007$b, mu0=pars$Ya2007$mu0))
+                        f=formulas,
+                        start=start,
+                        algorithm=algorithm,
+                        lb=lb, ub=ub,
+                        verbose=verbose, maxeval=maxeval)
     
     #res <- get("results",envir=.GlobalEnv)
   }
