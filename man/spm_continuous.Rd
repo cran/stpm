@@ -6,8 +6,8 @@
 \usage{
 spm_continuous(dat, a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5,
   mu0 = 2e-05, theta = 0.08, stopifbound = FALSE,
-  algorithm = "NLOPT_LN_COBYLA", lb = NULL, ub = NULL, maxeval = 500,
-  verbose = FALSE, pinv.tol = 0.01)
+  algorithm = "NLOPT_LN_NELDERMEAD", lb = NULL, ub = NULL,
+  maxeval = 500, verbose = FALSE, pinv.tol = 0.01, gomp = FALSE)
 }
 \arguments{
 \item{dat}{A data table.}
@@ -43,6 +43,9 @@ The program stops when the number of function evaluations exceeds maxeval. Defau
 
 \item{pinv.tol}{A tolerance value for pseudo-inverse of matrix gamma (see Yashin, A.I. et al (2007). Stochastic model for analysis of longitudinal data on aging 
 and mortality. Mathematical Biosciences, 208(2), 538-551.<DOI:10.1016/j.mbs.2006.11.006>.)}
+
+\item{gomp}{A flag (FALSE by default). When it is set, then time-dependent exponential form of mu0 and Q are used:
+mu0 = mu0*exp(theta*t), Q = Q*exp(theta*t).}
 }
 \value{
 A set of estimated parameters a, f1, Q, f, b, mu0, theta and
@@ -62,7 +65,7 @@ data <- simdata_cont(N=2)
 head(data)
 #Parameters estimation:
 pars <- spm_continuous(dat=data,a=-0.05, f1=80, 
-					 Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08)
+					           Q=2e-8, f=80, b=5, mu0=2e-5)
 pars
 
 }

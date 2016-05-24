@@ -4,50 +4,80 @@
 \alias{spm_gen}
 \title{Continuous multi-dimensional optimization for Genetic SPM (multidimensional GenSPM)}
 \usage{
-spm_gen(dat, a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5,
-  mu0 = 2e-05, theta = 0.08, p = 0.25, stopifbound = FALSE,
-  algorithm = "NLOPT_LN_COBYLA", lb = NULL, ub = NULL, maxeval = 500,
-  verbose = FALSE, pinv.tol = 0.01)
+spm_gen(gendat, nongendat = NULL, aH = -0.05, aL = -0.01, f1H = 60,
+  f1L = 80, QH = 2e-08, QL = 2.5e-08, fH = 60, fL = 80, bH = 4,
+  bL = 5, mu0H = 8e-06, mu0L = 1e-05, thetaH = 0.08, thetaL = 0.1,
+  p = 0.25, stopifbound = FALSE, algorithm = "NLOPT_LN_NELDERMEAD",
+  lb = NULL, ub = NULL, maxeval = 500, verbose = FALSE,
+  pinv.tol = 0.01, mode = "genetic", gomp = FALSE, ftol_rel = 1e-06)
 }
 \arguments{
-\item{dat}{A data table.}
+\item{gendat}{A data table with genetic component.}
 
-\item{a}{A starting value of the rate of adaptive response to any deviation of Y from f1(t).}
+\item{nongendat}{A data table without genetic component.}
 
-\item{f1}{A starting value of the average age trajectories of the variables which process is forced to follow.}
+\item{aH}{A k by k matrix. Characterizes the rate of the adaptive response for Z = 1.}
 
-\item{Q}{Starting values of the quadratic hazard term.}
+\item{aL}{A k by k matrix. Characterize the rate of the adaptive response for Z = 0.}
 
-\item{f}{A starting value of the "optimal" value of variable which corresponds to the minimum of hazard rate at a respective time.}
+\item{f1H}{A deviation from the norm (or optimal) state for Z = 1.
+This is a vector of length k.}
 
-\item{b}{A starting value of a diffusion coefficient representing a strength of the random disturbance from Wiener Process.}
+\item{f1L}{A deviation from the norm (or optimal) for Z = 0. 
+This is a vector of length k.}
 
-\item{mu0}{A starting value of the baseline hazard.}
+\item{QH}{A matrix k by k, which is a non-negative-definite symmetric matrix for Z = 1.}
 
-\item{theta}{A starting value of the parameter theta (axe displacement of Gompertz function).}
+\item{QL}{A matrix k by k, which is a non-negative-definite symmetric matrix for Z = 0.}
 
-\item{p}{A proportion of carriers and non-carriers in a population (default p=0.25).}
+\item{fH}{A vector with length of k. Represents the normal (or optimal) state for Z = 1.}
 
-\item{stopifbound}{Estimation stops if at least one parameter achieves lower or upper boundaries.}
+\item{fL}{A vector with length of k. Represents the normal (or optimal) state for Z = 0.}
+
+\item{bH}{A diffusion coefficient, k by k matrix for Z = 1.}
+
+\item{bL}{A diffusion coefficient, k by k matrix for Z = 0.}
+
+\item{mu0H}{A baseline mortality for Z = 1.}
+
+\item{mu0L}{A baseline mortality for Z = 0.}
+
+\item{thetaH}{A displacement coefficient for Z = 1.}
+
+\item{thetaL}{A displacement coefficient for Z = 0.}
+
+\item{p}{A percentage of carriers in a population (default p=0.25).}
+
+\item{stopifbound}{If TRUE then estimation stops if at least one parameter achieves lower or upper boundaries.}
 
 \item{algorithm}{An optimization algorithm used, can be one of those provided by \code{nloptr}. 
 #'Check the NLopt website for a description of
-the algorithms. Default: NLOPT_LN_COBYLA}
+the algorithms. Default: NLOPT_LN_NELDERMEAD}
 
-\item{lb}{Lower bound of parameters under estimation.}
+\item{lb}{Lower bound of parameter values.}
 
-\item{ub}{Upper bound of parameters under estimation.}
+\item{ub}{Upper bound of parameter values.}
 
 \item{maxeval}{Maximum number of iterations of the algorithm for \code{nloptr} optimization. 
 The program stops when the number of function evaluations exceeds maxeval. Default: 500.}
 
-\item{verbose}{An indicator of verbosing output.}
+\item{verbose}{An indicator of verbosing output (FALSE by default).}
 
 \item{pinv.tol}{A tolerance value for pseudo-inverse of matrix gamma (see Yashin, A.I. et al (2007). Stochastic model for analysis of longitudinal data on aging 
 and mortality. Mathematical Biosciences, 208(2), 538-551.<DOI:10.1016/j.mbs.2006.11.006>.)}
+
+\item{mode}{Can be one of the following: "genetic" (default), "nongenetic" or "combined". 
+mode = "genetic" represents analysing only data of genetic group (which contains a value of genetic marker);
+mode = "nongenetic" represents analysing only data of non-genetic group (not genotyped group).
+mode = "combined" denoted joint analysis of both genetic and non-genetic groups.}
+
+\item{gomp}{A flag (FALSE by default). When it is set, then time-dependent exponential form of mu0 and Q are used:
+mu0 = mu0*exp(theta*t), Q = Q*exp(theta*t).}
+
+\item{ftol_rel}{Relative tolerance threshold for likelihood function (defalult: 1e-6), see http://ab-initio.mit.edu/wiki/index.php/NLopt_Reference}
 }
 \value{
-A set of estimated parameters a, f1, Q, f, b, mu0, theta and
+A set of estimated parameters aH, aL, f1H, f1H, QH, QL, fH, fL, bH, bL, mu0H, mu0L, thetaH, thetaL, p and
 additional variable \code{limit} which indicates if any parameter 
 achieved lower or upper boundary conditions (FALSE by default).
 }
@@ -60,11 +90,10 @@ Continuous multi-dimensional optimization for Genetic SPM (multidimensional GenS
 \examples{
 library(stpm)
 #Reading the data:
-data <- simdata_gen(N=2)
+data <- simdata_gen(N=100)
 head(data)
 #Parameters estimation:
-pars <- spm_gen(dat=data,a=-0.05, f1=80, 
-					 Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08)
+pars <- spm_gen(gendat=data)
 pars
 
 }

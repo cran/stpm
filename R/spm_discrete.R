@@ -3,13 +3,13 @@
 #'for Nonlinear Analysis of Longitudinal Data. Mathematical Population Studies, 12(2), pp.: 51-80.
 #'<DOI:10.1080/08898480590932296>.
 #'@param dat A data table.
-#'@param theta_range A range of theta parameter (axe displacement of Gompertz function), default: from 0.001 to 0.09 with step of 0.001.
+#'@param theta_range A range of \code{theta} parameter (axe displacement of Gompertz function), default: from 0.001 to 0.09 with step of 0.001.
 #'@param tol A tolerance threshold for matrix inversion (NULL by default).
 #'@param verbose An indicator of verbosing output.
 #'@return A list of two elements ("Ak205", "Ya2007"): (1) estimated parameters u, R, b, Sigma, Q, mu0, theta and
 #'(2) estimated parameters a, f1, Q, f, b, mu0, theta. Note: b and mu0 from first list are different 
 #'from b and mu0 from the second list.
-#'@details This function is way much faster that continuous \code{spm_continuous_MD(...)} (but less precise) and used mainly in 
+#'@details This function is way more faster that continuous \code{spm_continuous_MD(...)} (but less precise) and used mainly in 
 #'estimation a starting point for the \code{spm_continuous_MD(...)}.
 #'@examples
 #'library(stpm)
@@ -109,6 +109,10 @@ spm_discrete <- function(dat, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verb
     index_i <- index_i + 1
   }
   
+  # DEBUG
+  #print(reg_formula)
+  #print(coef)
+  
   #Output parameters:
   parameters_glm <- unname(parameters_glm);
   theta <- parameters_glm[1]
@@ -150,6 +154,7 @@ spm_discrete <- function(dat, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verb
   f1H <- (-1)*u %*% solve(aH, tol=tol)
   fH <- -0.5 * b %*% solve(QH, tol=tol)
   mu0H <- mu0 - fH %*% QH %*% t(fH)
+
   thetaH <- theta
   pars2 <- list(a=aH, f1=f1H, Q=QH, f=fH, b=bH, mu0=mu0H, theta=thetaH)
   

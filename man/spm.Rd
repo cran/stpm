@@ -7,7 +7,7 @@
 spm(x, model = "discrete", formulas = NULL, start = NULL, tol = NULL,
   stopifbound = FALSE, algorithm = "NLOPT_LN_NELDERMEAD", lb = NULL,
   ub = NULL, maxeval = 100, pinv.tol = 0.01, theta.range = seq(0.01,
-  0.2, by = 0.001), verbose = FALSE)
+  0.2, by = 0.001), verbose = FALSE, gomp = FALSE)
 }
 \arguments{
 \item{x}{A dataset: is the output from prepare_data(...) function and consists of two separate data tables:
@@ -40,6 +40,9 @@ Default 100.}
 discrete-time optimization and estimating of starting point for continuous-time optimization.}
 
 \item{verbose}{A verbosing output indicator (FALSE by default).}
+
+\item{gomp}{A flag (FALSE by default). When it is set, then time-dependent exponential form of mu0 and Q are used:
+mu0 = mu0*exp(theta*t), Q = Q*exp(theta*t).}
 }
 \value{
 For "discrete" and "continuous" model types: 
@@ -58,22 +61,16 @@ A central function that estimates Stochastic Process Model parameters a from giv
 \examples{
 \dontrun{ 
 library(stpm)
-#Prepare data for optimization
-data <- prepare_data(x=system.file("data","longdat.csv",package="stpm"), 
-				   y=system.file("data","vitstat.csv",package="stpm"))
-#Parameters estimation (default model: discrete-time):
+data.continuous <- simdata_cont(N=1000)
+data.discrete <- simdata_discr(N=1000)
+data <- list(data.continuous, data.discrete)
 p.discr.model <- spm(data)
 p.discr.model
-# Continuous-time model:
 p.cont.model <- spm(data, model="continuous")
 p.cont.model
-#Model with time-dependent coefficients:
-data <- prepare_data(x=system.file("data","longdat.csv",package="stpm"), 
-				   y=system.file("data","vitstat.csv",package="stpm"), 
-				   covariates="BMI")
-p.td.model <- spm(data, model="time-dependent",
-                 f=list(at="aa*t+bb", f1t="f1", Qt="Q", ft="f", bt="b", mu0t="mu0"),
-                 start=list(a=-0.001, bb=0.05, f1=80, Q=2e-8, f=80, b=5, mu0=1e-3))
+p.td.model <- spm(data, 
+model="time-dependent",f=list(at="aa*t+bb", f1t="f1", Qt="Q", ft="f", bt="b", mu0t="mu0"), 
+start=list(a=-0.001, bb=0.05, f1=80, Q=2e-8, f=80, b=5, mu0=1e-3))
 p.td.model
 }
 }

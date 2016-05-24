@@ -7,7 +7,8 @@
 spm_time_dep(x, start = list(a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5, mu0
   = 0.001), f = list(at = "a", f1t = "f1", Qt = "Q", ft = "f", bt = "b", mu0t
   = "mu0"), stopifbound = FALSE, algorithm = "NLOPT_LN_NELDERMEAD",
-  lb = NULL, ub = NULL, verbose = FALSE, maxeval = 100)
+  lb = NULL, ub = NULL, verbose = FALSE, maxeval = 100,
+  ftol_rel = 1e-06)
 }
 \arguments{
 \item{x}{: input data table.}
@@ -24,9 +25,12 @@ spm_time_dep(x, start = list(a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5, mu0
 
 \item{ub}{Upper bound of parameters under estimation.}
 
-\item{verbose}{turns on verbosing output.}
+\item{verbose}{Turns on verbosing output.}
 
-\item{maxeval}{maximum number of iterations of optimization algorithm.}
+\item{maxeval}{A maximum number of iterations of optimization algorithm, default 100.}
+
+\item{ftol_rel}{Stop when an optimization step (or an estimate of the optimum) changes the objective function. 
+Default value 1e-6}
 }
 \value{
 a set of estimated coefficients of a, f1, Q, f, b, mu0 and (if used) theta.
