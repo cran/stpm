@@ -10,7 +10,7 @@
 
 <meta name="author" content="Ilya Y. Zhbannikov" />
 
-<meta name="date" content="2016-05-24" />
+<meta name="date" content="2016-09-04" />
 
 <title>Stochastic Process Model for Analysis of Longitudinal and Time-to-Event Outcomes</title>
 
@@ -64,7 +64,7 @@ img {
 <div id="header">
 <h1 class="title">Stochastic Process Model for Analysis of Longitudinal and Time-to-Event Outcomes</h1>
 <h4 class="author"><em>Ilya Y. Zhbannikov</em></h4>
-<h4 class="date"><em>2016-05-24</em></h4>
+<h4 class="date"><em>2016-09-04</em></h4>
 </div>
 
 
@@ -127,25 +127,25 @@ devtools::install_github(&quot;izhbannikov/stpm&quot;)</code></pre>
 <pre class="r"><code>library(stpm)
 data &lt;- simdata_discr(N=10) # simulate data for 10 individuals
 head(data)</code></pre>
-<pre><code>##      id xi t1 t2       y1  y1.next
-## [1,]  1  0 30 31 80.00000 79.35596
-## [2,]  1  0 31 32 79.35596 81.28550
-## [3,]  1  0 32 33 81.28550 70.68784
-## [4,]  1  0 33 34 70.68784 71.12490
-## [5,]  1  0 34 35 71.12490 64.77792
-## [6,]  1  0 35 36 64.77792 61.64584</code></pre>
+<pre><code>##      id xi t1 t2       y1   y1.next
+## [1,]  1  0 30 31 80.00000  79.64956
+## [2,]  1  0 31 32 79.64956  86.36129
+## [3,]  1  0 32 33 86.36129  97.13298
+## [4,]  1  0 33 34 97.13298  98.70302
+## [5,]  1  0 34 35 98.70302  96.82858
+## [6,]  1  0 35 36 96.82858 104.64651</code></pre>
 <p>In this case there are equal intervals between <span class="math inline">\(t_1\)</span> and <span class="math inline">\(t_2\)</span>.</p>
 <p>In the continuous-time SPM, in which intervals between observations are not equal (arbitrary or random). The example of such dataset is shown below:</p>
 <pre class="r"><code>library(stpm)
 data &lt;- simdata_cont(N=5) # simulate data for 5 individuals
 head(data)</code></pre>
 <pre><code>##      id xi       t1       t2       y1  y1.next
-## [1,]  0  0 33.65423 35.50419 79.39082 85.55678
-## [2,]  0  0 35.50419 36.57512 85.55678 80.40500
-## [3,]  0  0 36.57512 38.40167 80.40500 78.02948
-## [4,]  0  0 38.40167 39.56896 78.02948 73.28373
-## [5,]  0  0 39.56896 40.92755 73.28373 78.76800
-## [6,]  0  0 40.92755 42.10489 78.76800 83.21616</code></pre>
+## [1,]  0  0 31.08508 32.17657 81.34290 88.86695
+## [2,]  0  0 32.17657 33.69339 88.86695 90.77154
+## [3,]  0  0 33.69339 35.62579 90.77154 69.65674
+## [4,]  0  0 35.62579 37.29229 69.65674 85.05904
+## [5,]  0  0 37.29229 38.29349 85.05904 84.99607
+## [6,]  0  0 38.29349 40.28417 84.99607 77.42993</code></pre>
 <div id="discrete-time-model" class="section level3">
 <h3>Discrete-time model</h3>
 <p>The discrete model assumes fixed time intervals between consecutive observations. In this model, <span class="math inline">\(\mathbf{Y}(t)\)</span> (a <span class="math inline">\(k \times 1\)</span> matrix of the values of covariates, where <span class="math inline">\(k\)</span> is the number of considered covariates) and <span class="math inline">\(\mu(t, \mathbf{Y}(t))\)</span> (the hazard rate) have the following form:</p>
@@ -162,55 +162,55 @@ pars &lt;- spm_discrete(data)
 pars</code></pre>
 <pre><code>## $Ak2005
 ## $Ak2005$theta
-## [1] 0.079
+## [1] 0.078
 ## 
 ## $Ak2005$mu0
-## [1] 0.0001512160364
+## [1] 0.0002794930949
 ## 
 ## $Ak2005$b
-## [1] -3.438749888e-06
+## [1] -6.821266275e-06
 ## 
 ## $Ak2005$Q
 ##                 [,1]
-## [1,] 2.083339056e-08
+## [1,] 4.272584586e-08
 ## 
 ## $Ak2005$u
-## [1] 4.197279952
+## [1] 4.155849226
 ## 
 ## $Ak2005$R
-## [1] 0.9475382842
+## [1] 0.9468925278
 ## 
 ## $Ak2005$Sigma
-## [1] 4.975108355
+## [1] 5.025340228
 ## 
 ## 
 ## $Ya2007
 ## $Ya2007$a
 ##                [,1]
-## [1,] -0.05246171583
+## [1,] -0.05310747221
 ## 
 ## $Ya2007$f1
-##            [,1]
-## [1,] 80.0065321
+##             [,1]
+## [1,] 78.25356872
 ## 
 ## $Ya2007$Q
 ##                 [,1]
-## [1,] 2.083339056e-08
+## [1,] 4.272584586e-08
 ## 
 ## $Ya2007$f
 ##             [,1]
-## [1,] 82.52977059
+## [1,] 79.82599452
 ## 
 ## $Ya2007$b
 ##             [,1]
-## [1,] 4.975108355
+## [1,] 5.025340228
 ## 
 ## $Ya2007$mu0
 ##                 [,1]
-## [1,] 9.316416729e-06
+## [1,] 7.235912768e-06
 ## 
 ## $Ya2007$theta
-## [1] 0.079
+## [1] 0.078
 ## 
 ## 
 ## attr(,&quot;class&quot;)
@@ -232,46 +232,44 @@ pars</code></pre>
 data &lt;- simdata_cont(N=100)
 head(data)</code></pre>
 <pre><code>##      id xi          t1          t2          y1     y1.next
-## [1,]  0  0 32.51561550 34.24827353 79.14305965 84.88388519
-## [2,]  0  0 34.24827353 35.96770103 84.88388519 79.60417750
-## [3,]  0  0 35.96770103 37.78338322 79.60417750 88.71078533
-## [4,]  0  0 37.78338322 39.00222437 88.71078533 90.36617434
-## [5,]  0  0 39.00222437 40.92267719 90.36617434 89.79047395
-## [6,]  0  0 40.92267719 42.58002054 89.79047395 91.81403818</code></pre>
+## [1,]  0  0 35.44212551 36.63518729 79.72934447 81.95768546
+## [2,]  0  0 36.63518729 38.01784896 81.95768546 82.25371387
+## [3,]  0  0 38.01784896 39.67961635 82.25371387 80.92134836
+## [4,]  0  0 39.67961635 41.20955527 80.92134836 84.33144654
+## [5,]  0  0 41.20955527 42.63565476 84.33144654 74.49085661
+## [6,]  0  0 42.63565476 44.35604600 74.49085661 65.89954272</code></pre>
 <pre class="r"><code>#Estimate parameters
 # a=-0.05, f1=80, Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08 are starting values for estimation procedure
-pars &lt;- spm_continuous(dat=data,a=-0.05, f1=80, Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08)</code></pre>
-<pre><code>## Parameter f achieved lower/upper bound.
-## 72</code></pre>
-<pre class="r"><code>pars</code></pre>
+pars &lt;- spm_continuous(dat=data,a=-0.05, f1=80, Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08)
+pars</code></pre>
 <pre><code>## $a
 ##                [,1]
-## [1,] -0.05011696658
+## [1,] -0.05007861842
 ## 
 ## $f1
 ##             [,1]
-## [1,] 78.32045588
+## [1,] 78.91036593
 ## 
 ## $Q
-##                 [,1]
-## [1,] 2.048207562e-08
+##                [,1]
+## [1,] 2.08060158e-08
 ## 
 ## $f
-##      [,1]
-## [1,]   72
+##             [,1]
+## [1,] 81.47941595
 ## 
 ## $b
-##             [,1]
-## [1,] 4.938753192
+##            [,1]
+## [1,] 5.01193387
 ## 
 ## $mu0
-## [1] 2.199769966e-05
+## [1] 1.950645797e-05
 ## 
 ## $theta
-## [1] 0.08536684528
+## [1] 0.08095031041
 ## 
 ## $limit
-## [1] TRUE
+## [1] FALSE
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;spm.continuous&quot;</code></pre>
@@ -298,43 +296,41 @@ pars &lt;- spm_continuous(dat=data,a=-0.05, f1=80, Q=2e-8, f=80, b=5, mu0=2e-5, 
 <h4>Example</h4>
 <pre class="r"><code>library(stpm)
 #Data preparation:
-n &lt;- 500
+n &lt;- 50
 data &lt;- simdata_time_dep(N=n)
 # Estimation:
 opt.par &lt;- spm_time_dep(data, 
                         start = list(a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5, mu0 = 0.001), 
-                        f = list(at = &quot;a&quot;, f1t = &quot;f1&quot;, Qt = &quot;Q&quot;, ft = &quot;f&quot;, bt = &quot;b&quot;, mu0t= &quot;mu0&quot;))</code></pre>
-<pre><code>##      a     f1      Q      f      b    mu0 
-## -5e-02  8e+01  2e-08  8e+01  5e+00  1e-03</code></pre>
-<pre class="r"><code>opt.par</code></pre>
+                        frm = list(at = &quot;a&quot;, f1t = &quot;f1&quot;, Qt = &quot;Q&quot;, ft = &quot;f&quot;, bt = &quot;b&quot;, mu0t= &quot;mu0&quot;))
+opt.par</code></pre>
 <pre><code>## [[1]]
 ## [[1]]$a
-## [1] -0.04950011737
+## [1] -0.05740929497
 ## 
 ## [[1]]$f1
-## [1] 79.69567895
+## [1] 80.25586796
 ## 
 ## [[1]]$Q
-## [1] 2.293834891e-08
+## [1] 2.269684109e-08
 ## 
 ## [[1]]$f
-## [1] 89.98987456
+## [1] 85.47037859
 ## 
 ## [[1]]$b
-## [1] 4.968638295
+## [1] 5.068353201
 ## 
 ## [[1]]$mu0
-## [1] 0.001067151218
+## [1] 0.0008671811525
 ## 
 ## [[1]]$status
 ## [1] 3
 ## 
 ## [[1]]$LogLik
 ##           t2 
-## -80391.90441 
+## -8040.740093 
 ## 
 ## [[1]]$objective
-## [1] 80391.88387
+## [1] 8040.736959
 ## 
 ## [[1]]$message
 ## [1] &quot;NLOPT_FTOL_REACHED: Optimization stopped because ftol_rel or ftol_abs (above) was reached.&quot;</code></pre>
@@ -366,12 +362,12 @@ opt.par &lt;- spm_time_dep(data,
 data &lt;- simdata_discr(N=10)
 head(data)</code></pre>
 <pre><code>##      id xi t1 t2          y1     y1.next
-## [1,]  1  0 30 31 80.00000000 76.76477343
-## [2,]  1  0 31 32 76.76477343 71.59940665
-## [3,]  1  0 32 33 71.59940665 74.90510962
-## [4,]  1  0 33 34 74.90510962 75.63551828
-## [5,]  1  0 34 35 75.63551828 72.21924911
-## [6,]  1  0 35 36 72.21924911 75.61134925</code></pre>
+## [1,]  1  0 30 31 80.00000000 71.05661530
+## [2,]  1  0 31 32 71.05661530 66.27099977
+## [3,]  1  0 32 33 66.27099977 65.73137314
+## [4,]  1  0 33 34 65.73137314 70.53494657
+## [5,]  1  0 34 35 70.53494657 73.37986659
+## [6,]  1  0 35 36 73.37986659 75.05224487</code></pre>
 </div>
 <div id="continuous-time-simulation" class="section level3">
 <h3>Continuous-time simulation</h3>
@@ -394,30 +390,30 @@ head(data)</code></pre>
 data &lt;- simdata_cont(N=10)
 head(data)</code></pre>
 <pre><code>##      id xi          t1          t2          y1     y1.next
-## [1,]  0  0 37.16723486 38.30612625 81.80505519 85.66223660
-## [2,]  0  0 38.30612625 39.39132595 85.66223660 84.13378423
-## [3,]  0  0 39.39132595 41.16853626 84.13378423 88.58793127
-## [4,]  0  0 41.16853626 42.57274700 88.58793127 95.52933991
-## [5,]  0  0 42.57274700 44.34708806 95.52933991 87.67130226
-## [6,]  0  0 44.34708806 46.25277576 87.67130226 88.08549142</code></pre>
+## [1,]  0  0 38.17902850 39.84507074 80.03167612 76.34472382
+## [2,]  0  0 39.84507074 40.94297748 76.34472382 74.83343846
+## [3,]  0  0 40.94297748 42.21895547 74.83343846 78.52860191
+## [4,]  0  0 42.21895547 43.58787575 78.52860191 86.02490234
+## [5,]  0  0 43.58787575 45.31921660 86.02490234 89.41061743
+## [6,]  0  0 45.31921660 47.22382956 89.41061743 83.76220725</code></pre>
 </div>
 </div>
-<div id="spm-with-genetic-component-genspm" class="section level2">
-<h2>SPM with genetic component: GenSPM</h2>
+<div id="spm-with-partially-observed-covariates" class="section level2">
+<h2>SPM with partially observed covariates</h2>
 <p>Stochastic Process Model has many applications in analysis of longitudinal biodemographic data. Such data contain various physiological variables (known as covariates). Data can also potentially contain genetic information available for all or a part of participants. Taking advantage from both genetic and non-genetic information can provide future insights into a broad range of processes describing aging-related changes in the organism.</p>
 <div id="method" class="section level3">
 <h3>Method</h3>
-<p>GenSPM (Genetic SPM), presented in 2009 by Arbeev at al [6] and further advanced in [7,8], further elaborates the basic stochastic process model conception by introducing a categorical variable, <span class="math inline">\(Z\)</span>, which may be a specific value of a genetic marker or, in general, any categorical variable. Currently, <span class="math inline">\(Z\)</span> has two gradations: 0 or 1 in a genetic group of interest, assuming that <span class="math inline">\(P(Z=1) = p\)</span>, <span class="math inline">\(p \in [0, 1]\)</span>, were <span class="math inline">\(p\)</span> is the proportion of carriers and non-carriers of an allele in a population. Example of longitudinal data with genetic component <span class="math inline">\(Z\)</span> is provided below.</p>
+<p>In this package, SPM with partially observed covariates is implemented in form of GenSPM (Genetic SPM), presented in 2009 by Arbeev at al [6] and further advanced in [7,8], further elaborates the basic stochastic process model conception by introducing a categorical variable, <span class="math inline">\(Z\)</span>, which may be a specific value of a genetic marker or, in general, any categorical variable. Currently, <span class="math inline">\(Z\)</span> has two gradations: 0 or 1 in a genetic group of interest, assuming that <span class="math inline">\(P(Z=1) = p\)</span>, <span class="math inline">\(p \in [0, 1]\)</span>, were <span class="math inline">\(p\)</span> is the proportion of carriers and non-carriers of an allele in a population. Example of longitudinal data with genetic component <span class="math inline">\(Z\)</span> is provided below.</p>
 <pre class="r"><code>library(stpm)
-data &lt;- simdata_gen(N=10)
+data &lt;- sim_pobs(N=10)
 head(data)</code></pre>
-<pre><code>##      id xi          t1          t2 Z          y1     y1.next
-## [1,]  0  0 61.41051633 62.49976734 0 80.68916159 78.88867423
-## [2,]  0  0 62.49976734 63.47274132 0 78.88867423 81.30104926
-## [3,]  0  0 63.47274132 64.51027973 0 81.30104926 80.48717219
-## [4,]  0  0 64.51027973 65.49772676 0 80.48717219 81.86955043
-## [5,]  0  0 65.49772676 66.51982278 0 81.86955043 80.03081997
-## [6,]  0  0 66.51982278 67.49157073 0 80.03081997 83.35746302</code></pre>
+<pre><code>##   id xi           t1          t2 Z          y1     y1.next
+## 1  0  0  99.46889485 100.5443216 0 81.77743575 79.07220059
+## 2  0  0 100.54432164 101.5045688 0 79.07220059 74.42370537
+## 3  0  0 101.50456877 102.4385202 0 74.42370537 77.29910322
+## 4  0  0 102.43852020 103.4828045 0 77.29910322 80.66806776
+## 5  0  0 103.48280449 104.5317042 0 80.66806776 86.53013222
+## 6  1  0  61.12878076  62.0845993 0 80.37739011 74.53147414</code></pre>
 <p>In the specification of the SPM described in 2007 paper by Yashin and colleagues [3] the stochastic differential equation describing the age dynamics of a physiological variable (a dynamic component of the model) is:</p>
 <p><span class="math inline">\(dY(t) = a(Z, t)(Y(t) - f1(Z, t))dt + b(Z, t)dW(t), Y(t = t_0)\)</span></p>
 <p>Here in this equation, <span class="math inline">\(Y(t)\)</span> is a <span class="math inline">\(k \times 1\)</span> matrix, where <span class="math inline">\(k\)</span> is a number of covariates, which is a model dimension) describing the value of a physiological variable at a time (e.g. age) t. <span class="math inline">\(f_1(Z,t)\)</span> is a <span class="math inline">\(k \times 1\)</span> matrix that corresponds to the long-term average value of the stochastic process <span class="math inline">\(Y(t)\)</span>, which describes a trajectory of individual variable influenced by different factors represented by a random Wiener process <span class="math inline">\(W(t)\)</span>. The negative feedback coefficient <span class="math inline">\(a(Z,t)\)</span> (<span class="math inline">\(k \times k\)</span> matrix) characterizes the rate at which the stochastic process goes to its mean. In research on aging and well-being, <span class="math inline">\(f_1(Z,t)\)</span> represents the average allostatic trajectory and <span class="math inline">\(a(t)\)</span> in this case represents the adaptive capacity of the organism. Coefficient <span class="math inline">\(b(Z,t)\)</span> (<span class="math inline">\(k \times 1\)</span> matrix) characterizes a strength of the random disturbances from Wiener process <span class="math inline">\(W(t)\)</span>. All of these parameters depend on <span class="math inline">\(Z\)</span> (a genetic marker having values 1 or 0). The following function <span class="math inline">\(\mu(t,Y(t))\)</span> represents a hazard rate:</p>
@@ -425,167 +421,173 @@ head(data)</code></pre>
 <p>In this equation: <span class="math inline">\(\mu_0(t)\)</span> is the baseline hazard, which represents a risk when <span class="math inline">\(Y(t)\)</span> follows its optimal trajectory; f(t) (<span class="math inline">\(k \times 1\)</span> matrix) represents the optimal trajectory that minimizes the risk and <span class="math inline">\(Q(Z, t)\)</span> (<span class="math inline">\(k \times k\)</span> matrix) represents a sensitivity of risk function to deviation from the norm. In general, model coefficients <span class="math inline">\(a(Z, t)\)</span>, <span class="math inline">\(f1(Z, t)\)</span>, <span class="math inline">\(Q(Z, t)\)</span>, <span class="math inline">\(f(Z, t)\)</span>, <span class="math inline">\(b(Z, t)\)</span> and <span class="math inline">\(\mu_0(t)\)</span> are time(age)-dependent. Once we have data, we then can run analysis, i.e. estimate coefficients (they are assumed to be time-independent and data here is simulated):</p>
 <pre class="r"><code>library(stpm)
 #Generating data:
-data &lt;- simdata_gen(N=1000)
+data &lt;- sim_pobs(N=10)
 head(data)</code></pre>
-<pre><code>##      id xi          t1          t2 Z          y1     y1.next
-## [1,]  0  0 52.44653755 53.50164236 0 80.16095394 86.94035595
-## [2,]  0  0 53.50164236 54.58320141 0 86.94035595 89.00984860
-## [3,]  0  0 54.58320141 55.61535630 0 89.00984860 91.39819612
-## [4,]  0  0 55.61535630 56.65300708 0 91.39819612 88.40321075
-## [5,]  0  0 56.65300708 57.61002007 0 88.40321075 87.25933471
-## [6,]  0  0 57.61002007 58.59272133 0 87.25933471 90.67593891</code></pre>
+<pre><code>##   id xi          t1          t2 Z          y1     y1.next
+## 1  0  0 86.71362594 87.66960140 0 79.94674627 85.75194409
+## 2  0  0 87.66960140 88.74631640 0 85.75194409 79.77500017
+## 3  0  0 88.74631640 89.67148405 0 79.77500017 82.91212493
+## 4  0  0 89.67148405 90.72023040 0 82.91212493 78.56597243
+## 5  0  0 90.72023040 91.65991436 0 78.56597243 80.77661900
+## 6  0  0 91.65991436 92.69503672 0 80.77661900 87.17250316</code></pre>
 <pre class="r"><code>#Parameters estimation:
-pars &lt;- spm_gen(gendat=data)</code></pre>
-<pre><code>## Provided mode:  genetic</code></pre>
+pars &lt;- spm_pobs(x=data)</code></pre>
+<pre><code>## Parameter f1H achieved lower/upper bound.
+## 54 
+## Parameter QL achieved lower/upper bound.
+## 2.75e-08 
+## Parameter mu0H achieved lower/upper bound.
+## 7.2e-06 
+## Parameter thetaL achieved lower/upper bound.
+## 0.09</code></pre>
 <pre class="r"><code>pars</code></pre>
 <pre><code>## $aH
 ##                [,1]
-## [1,] -0.05123251124
+## [1,] -0.05415998541
 ## 
 ## $aL
 ##                 [,1]
-## [1,] -0.007953630848
+## [1,] -0.009754778486
 ## 
 ## $f1H
-##             [,1]
-## [1,] 60.11337286
+##      [,1]
+## [1,]   54
 ## 
 ## $f1L
-##            [,1]
-## [1,] 80.6117397
+##             [,1]
+## [1,] 79.71328702
 ## 
 ## $QH
-##                [,1]
-## [1,] 2.03975181e-08
+##                 [,1]
+## [1,] 2.188148156e-08
 ## 
 ## $QL
-##                 [,1]
-## [1,] 2.514154894e-08
+##          [,1]
+## [1,] 2.75e-08
 ## 
 ## $fH
 ##             [,1]
-## [1,] 64.97148774
+## [1,] 65.92442671
 ## 
 ## $fL
 ##             [,1]
-## [1,] 80.05075166
+## [1,] 74.72696149
 ## 
 ## $bH
 ##             [,1]
-## [1,] 4.056928496
+## [1,] 3.618414945
 ## 
 ## $bL
 ##             [,1]
-## [1,] 4.973394186
+## [1,] 5.063820344
 ## 
 ## $mu0H
-## [1] 7.983052034e-06
+## [1] 7.2e-06
 ## 
 ## $mu0L
-## [1] 9.997209371e-06
+## [1] 9.003957339e-06
 ## 
 ## $thetaH
-## [1] 0.08547298895
+## [1] 0.07315909157
 ## 
 ## $thetaL
-## [1] 0.1044229574
+## [1] 0.09
 ## 
 ## $p
-## [1] 0.2544391401
+## [1] 0.2721164912
 ## 
 ## $limit
-## [1] FALSE
+## [1] TRUE
 ## 
 ## attr(,&quot;class&quot;)
-## [1] &quot;gen.spm&quot;</code></pre>
+## [1] &quot;pobs.spm&quot;</code></pre>
 <p>Here  and  represents parameters when <span class="math inline">\(Z\)</span> = 1 (<strong>H</strong>) and 0 (<strong>L</strong>).</p>
 </div>
 <div id="joint-analysis-of-two-datasets-first-dataset-with-genetic-and-second-dataset-with-non-genetic-component" class="section level3">
 <h3>Joint analysis of two datasets: first dataset with genetic and second dataset with non-genetic component</h3>
 <pre class="r"><code>library(stpm)
-data.genetic &lt;- simdata_gen(N=100, mode='genetic')
+data.genetic &lt;- sim_pobs(N=10, mode='observed')
 head(data.genetic)</code></pre>
-<pre><code>##      id xi           t1           t2 Z          y1     y1.next
-## [1,]  0  0  97.80378424  98.71234172 0 80.11617675 73.92889739
-## [2,]  0  0  98.71234172  99.63156793 0 73.92889739 65.38703496
-## [3,]  0  0  99.63156793 100.53872736 0 65.38703496 55.87088843
-## [4,]  0  0 100.53872736 101.44291087 0 55.87088843 57.68354577
-## [5,]  0  0 101.44291087 102.46930606 0 57.68354577 58.65519863
-## [6,]  0  0 102.46930606 103.48103863 0 58.65519863 63.72991179</code></pre>
-<pre class="r"><code>data.nongenetic &lt;- simdata_gen(N=500, mode='nongenetic')
+<pre><code>##   id xi          t1          t2 Z          y1     y1.next
+## 1  0  0 69.13140783 70.07921545 0 78.07307815 84.89852680
+## 2  0  0 70.07921545 71.16321540 0 84.89852680 79.03626042
+## 3  0  0 71.16321540 72.08940085 0 79.03626042 81.35377142
+## 4  0  0 72.08940085 73.12641991 0 81.35377142 81.46236846
+## 5  0  0 73.12641991 74.12835031 0 81.46236846 66.09969380
+## 6  0  0 74.12835031 75.02855590 0 66.09969380 65.08279920</code></pre>
+<pre class="r"><code>data.nongenetic &lt;- sim_pobs(N=50, mode='unobserved')
 head(data.nongenetic)</code></pre>
-<pre><code>##      id xi          t1           t2          y1     y1.next
-## [1,]  0  0 100.1837133 101.14500515 81.46636522 79.82801120
-## [2,]  0  0 101.1450052 102.11892349 79.82801120 82.73650992
-## [3,]  0  0 102.1189235 103.16353646 82.73650992 83.79220081
-## [4,]  0  0 103.1635365 104.18042361 83.79220081 81.54844645
-## [5,]  1  0  51.8349018  52.76980260 82.09191808 89.08067724
-## [6,]  1  0  52.7698026  53.85527455 89.08067724 91.68975358</code></pre>
+<pre><code>##   id xi          t1          t2          y1     y1.next
+## 1  0  0 90.55443227 91.65328813 81.32287704 78.32438920
+## 2  0  0 91.65328813 92.60998921 78.32438920 80.18359039
+## 3  0  0 92.60998921 93.63949841 80.18359039 89.76796461
+## 4  0  0 93.63949841 94.73374603 89.76796461 90.73317902
+## 5  0  0 94.73374603 95.75006616 90.73317902 84.50176161
+## 6  0  0 95.75006616 96.67227923 84.50176161 81.55706134</code></pre>
 <pre class="r"><code>#Parameters estimation:
-pars &lt;- spm_gen(gendat=data.genetic, nongendat = data.nongenetic, mode='combined')</code></pre>
-<pre><code>## Provided mode:  combined</code></pre>
-<pre class="r"><code>pars</code></pre>
+pars &lt;- spm_pobs(x=data.genetic, y = data.nongenetic, mode='combined')
+pars</code></pre>
 <pre><code>## $aH
 ##                [,1]
-## [1,] -0.04967476518
+## [1,] -0.04222454925
 ## 
 ## $aL
 ##                [,1]
-## [1,] -0.01079991902
+## [1,] -0.01070928209
 ## 
 ## $f1H
 ##             [,1]
-## [1,] 62.52339366
+## [1,] 56.38280885
 ## 
 ## $f1L
 ##             [,1]
-## [1,] 75.28066924
+## [1,] 80.53083853
 ## 
 ## $QH
 ##                 [,1]
-## [1,] 1.936512619e-08
+## [1,] 2.198883637e-08
 ## 
 ## $QL
 ##                 [,1]
-## [1,] 2.393332831e-08
+## [1,] 2.359188823e-08
 ## 
 ## $fH
 ##             [,1]
-## [1,] 64.60830188
+## [1,] 56.69390069
 ## 
 ## $fL
 ##             [,1]
-## [1,] 78.73481538
+## [1,] 77.95009252
 ## 
 ## $bH
 ##             [,1]
-## [1,] 4.021079902
+## [1,] 4.150744746
 ## 
 ## $bL
 ##             [,1]
-## [1,] 5.016507059
+## [1,] 4.999278913
 ## 
 ## $mu0H
-## [1] 7.942684365e-06
+## [1] 7.32536981e-06
 ## 
 ## $mu0L
-## [1] 9.64441806e-06
+## [1] 9.002457382e-06
 ## 
 ## $thetaH
-## [1] 0.08650108014
+## [1] 0.07208770662
 ## 
 ## $thetaL
-## [1] 0.1086482374
+## [1] 0.09002035774
 ## 
 ## $p
-## [1] 0.2748817363
+## [1] 0.2734764324
 ## 
 ## $limit
 ## [1] FALSE
 ## 
 ## attr(,&quot;class&quot;)
-## [1] &quot;gen.spm&quot;</code></pre>
-<p>Here mode ‘genetic’ is used for simlation of data with genetic component <span class="math inline">\(Z\)</span> and ‘nongenetic’ - without genetic component.</p>
+## [1] &quot;pobs.spm&quot;</code></pre>
+<p>Here mode ‘observed’ is used for simlation of data with genetic component <span class="math inline">\(Z\)</span> and ‘unobserved’ - without genetic component.</p>
 </div>
 </div>
 <div id="references" class="section level2">
@@ -595,7 +597,7 @@ pars &lt;- spm_gen(gendat=data.genetic, nongendat = data.nongenetic, mode='combi
 <p>[3] Yashin, A.I. et al. Stochastic model for analysis of longitudinal data on aging and mortality. Mathematical Biosciences, 2007 208(2) 538-551.</p>
 <p>[4] Akushevich I., Kulminski A. and Manton K.: Life tables with covariates: Dynamic model for Nonlinear Analysis of Longitudinal Data. 2005. Mathematical Popu-lation Studies, 12(2), pp.: 51-80.</p>
 <p>[5] Yashin, A. et al. Health decline, aging and mortality: how are they related? Biogerontology, 2007 8(3), 291-302.</p>
-<p>[6] Arbeev, K.G., Akushevich, I., Kulminski, A.M., Arbeeva, L.S., Akushevich, L., Ukraintseva, S.V., Culminskaya, I.V., Yashin, A.I.: Genetic model for longitudinal studies of aging, health, and longevity and its potential application to incomplete data. Journal of Theoretical Biology 258(1), 103{111 (2009). <a href="doi:10.1016/j.jtbi.2009.01.023" class="uri">doi:10.1016/j.jtbi.2009.01.023</a></p>
+<p>[6] Arbeev, K.G., Akushevich, I., Kulminski, A.M., Arbeeva, L.S., Akushevich, L., Ukraintseva, S.V., Culminskaya, I.V., Yashin, A.I.: Genetic model for longitudinal studies of aging, health, and longevity and its potential application to incomplete data. Journal of Theoretical Biology 258(1), 103{111 (2009).</p>
 <p>[7] Arbeev K.G, Akushevich I., Kulminski A.M., Ukraintseva S.V., Yashin A.I., Joint Analyses of Longitudinal and Time-to-Event Data in Research on Aging: Implications for Predicting Health and Survival, Front Public Health. 2014 Nov 6;2:228. doi: 10.3389/fpubh.2014.00228</p>
 <p>[8] Arbeev K., Arbeeva L., Akushevich I., Kulminski A., Ukraintseva S., Yashin A., Latent Class and Genetic Stochastic Process Models: Implications for Analyses of Longitudinal Data on Aging, Health, and Longevity, JSM-2015, Seattle, WA.</p>
 </div>
