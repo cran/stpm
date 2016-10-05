@@ -12,18 +12,22 @@ trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 
 #'spm_time_dep : a function that estimates parameters from the model with time-dependent coefficients.
-#'@param x : input data table.
-#'@param start : a list of starting parameters, default: list(a=-0.5, f1=80, Q=2e-8, f=80, b=5, mu0=1e-5),
-#'@param frm : a list of formulas that define age (time) - dependency. Default: list(at="a", f1t="f1", Qt="Q", ft="f", bt="b", mu0t="mu0")
+#'@param x Input data table.
+#'@param start A list of starting parameters, default: list(a=-0.5, f1=80, Q=2e-8, f=80, b=5, mu0=1e-5),
+#'@param frm A list of formulas that define age (time) - dependency. Default: list(at="a", f1t="f1", Qt="Q", ft="f", bt="b", mu0t="mu0")
 #'@param stopifbound Estimation stops if at least one parameter achieves lower or upper boundaries.
 #'@param algorithm An optimization algorithm used, can be one of those: NLOPT_LN_NEWUOA,NLOPT_LN_NEWUOA_BOUND or NLOPT_LN_NELDERMEAD. Default: NLOPT_LN_NELDERMEAD
 #'@param lb Lower bound of parameters under estimation.
 #'@param ub Upper bound of parameters under estimation.
 #'@param verbose Turns on verbosing output.
 #'@param maxeval A maximum number of iterations of optimization algorithm, default 100.
-#'@param ftol_rel Stop when an optimization step (or an estimate of the optimum) changes the objective function. 
-#'Default value 1e-6
-#'@return a set of estimated coefficients of a, f1, Q, f, b, mu0 and (if used) theta.
+#'@param ftol_rel Stops when an optimization step (or an estimate of the optimum) changes the objective function. 
+#'Default value 1e-6.
+#'@return A set of estimated coefficients of a, f1, Q, f, b, mu0.
+#'@return status Optimization status (see documentation for nloptr package).
+#'@return LogLik A logarithm likelihood.
+#'@return objective A value of objective function (given by nloptr).
+#'@return message A message given by nloptr optimization function (see documentation for nloptr package).
 #'@references Yashin, A. et al (2007), Health decline, aging and mortality: how are they related? 
 #'Biogerontology, 8(3), 291-302.<DOI:10.1007/s10522-006-9073-3>.
 #'@examples
@@ -42,6 +46,30 @@ spm_time_dep <- function(x,
                          algorithm="NLOPT_LN_NELDERMEAD",
                          lb=NULL, ub=NULL,
                          verbose=FALSE, maxeval=100, ftol_rel=1e-6) {
+  
+  avail_algorithms <- c("NLOPT_GN_DIRECT", "NLOPT_GN_DIRECT_L",
+                        "NLOPT_GN_DIRECT_L_RAND", "NLOPT_GN_DIRECT_NOSCAL",
+                        "NLOPT_GN_DIRECT_L_NOSCAL",
+                        "NLOPT_GN_DIRECT_L_RAND_NOSCAL",
+                        "NLOPT_GN_ORIG_DIRECT", "NLOPT_GN_ORIG_DIRECT_L",
+                        "NLOPT_GD_STOGO", "NLOPT_GD_STOGO_RAND",
+                        "NLOPT_LD_SLSQP", "NLOPT_LD_LBFGS_NOCEDAL",
+                        "NLOPT_LD_LBFGS", "NLOPT_LN_PRAXIS", "NLOPT_LD_VAR1",
+                        "NLOPT_LD_VAR2", "NLOPT_LD_TNEWTON",
+                        "NLOPT_LD_TNEWTON_RESTART",
+                        "NLOPT_LD_TNEWTON_PRECOND",
+                        "NLOPT_LD_TNEWTON_PRECOND_RESTART",
+                        "NLOPT_GN_CRS2_LM", "NLOPT_GN_MLSL", "NLOPT_GD_MLSL",
+                        "NLOPT_GN_MLSL_LDS", "NLOPT_GD_MLSL_LDS",
+                        "NLOPT_LD_MMA", "NLOPT_LN_COBYLA", "NLOPT_LN_NEWUOA",
+                        "NLOPT_LN_NEWUOA_BOUND", "NLOPT_LN_NELDERMEAD",
+                        "NLOPT_LN_SBPLX", "NLOPT_LN_AUGLAG", "NLOPT_LD_AUGLAG",
+                        "NLOPT_LN_AUGLAG_EQ", "NLOPT_LD_AUGLAG_EQ",
+                        "NLOPT_LN_BOBYQA", "NLOPT_GN_ISRES")
+  
+  if(!(algorithm %in% avail_algorithms)) {
+    stop(cat("Provided algorithm ", algorithm, " not in the list of available optimization methods."))
+  }
   
   #--------------Begin of optimize function-------------------#
   optimize <- function(data, starting_params,  formulas, verbose, 
@@ -173,7 +201,6 @@ spm_time_dep <- function(x,
     #---
     parameters <- trim(unlist(strsplit(formulas$bt,"[\\+\\*\\(\\)]",fixed=F)))
     parameters <- parameters[which(!(parameters %in% c("t","exp")))]
-    #for(p in parameters) {assign(p,NULL, envir = .GlobalEnv); variables <- c(variables, p);}
     for(p in parameters) {assign(p,NULL, envir=baseenv()); variables <- c(variables, p);}
     variables <- unique(variables)
     p.constants <- c()
@@ -198,7 +225,6 @@ spm_time_dep <- function(x,
     #---
     parameters <- trim(unlist(strsplit(formulas$mu0t,"[\\+\\*\\(\\)]",fixed=F)))
     parameters <- parameters[which(!(parameters %in% c("t","exp")))]
-    #for(p in parameters) {assign(p,NULL, envir = .GlobalEnv); variables <- c(variables, p);}
     for(p in parameters) {assign(p,NULL, envir=baseenv()); variables <- c(variables, p);}
     variables <- unique(variables)
     p.constants <- c()
@@ -225,18 +251,17 @@ spm_time_dep <- function(x,
     p.const.ind <- unique(p.const.ind)
     p.coeff.ind <- unique(p.coeff.ind)
     
-    #variables <- unique(variables)
+    variables <- variables[which(variables != "0")]
+    
     
     stpar <- rep(0, length(variables))
     for(i in 1:length(stpar)) {
-      #stpar[p.const.ind[i]] <- unlist(starting_params, use.names = FALSE)[i]
       stpar[i] <- unlist(starting_params, use.names = FALSE)[i]
     }
     names(stpar) <- variables
     
     for(p in names(stpar)) {
       results[[p]] <- stpar[p]
-      #assign(p, stpar[p], envir = globalenv())
       assign(p, stpar[p], envir=baseenv())
     }
     
@@ -285,7 +310,6 @@ spm_time_dep <- function(x,
       names(params) <- names(stpar)
       
       for(p in names(stpar)) {
-        #assign(p, params[[p]], envir = globalenv())
         assign(p, params[[p]], envir=baseenv())
         results[[p]] <<- params[[p]]
         if(verbose)
@@ -306,7 +330,6 @@ spm_time_dep <- function(x,
       }
       
       mu <- function(y,t) {
-        #print(paste(t, mu0t(t)))
         ans <- mu0t(t) + (y - ft(t))^2*Qt(t)
         ans
       }
@@ -331,8 +354,6 @@ spm_time_dep <- function(x,
           t1 <- data[i, 2]; t2 <- data[i, 3]
           ind <- ifelse(is.na(data[i, 5]), 0, 1)
           S <- exp(-1*mu(data[i, 4],t1)*(t2-t1))
-          #print(paste(data[i, 4], t2, t1, t2-t1))
-          #print(-1*mu(data[i, 4],t1)*(t2-t1))
           if(ind == 0) {
             L <- L + (1 - delta)*log(S) + delta*log(1-S)
           } else {
@@ -345,7 +366,6 @@ spm_time_dep <- function(x,
           
         }
         
-        #assign("results", results, envir=.GlobalEnv)
         assign("results", results, envir=baseenv())
         
         iteration <<- iteration + 1
@@ -395,6 +415,8 @@ spm_time_dep <- function(x,
       print(upper_bound)
       
     }
+    
+    
     tryCatch({ans <- nloptr(x0 = unlist(stpar), 
                             eval_f = maxlik_t, opts = list("algorithm"=algorithm, 
                                                            "ftol_rel"=ftol_rel, maxeval=maxeval),

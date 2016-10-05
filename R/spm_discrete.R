@@ -19,7 +19,9 @@
 #'pars
 #'
 spm_discrete <- function(dat, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verbose=FALSE) {
-  
+  #dat <- data
+  #theta_range=seq(0.02,0.2,by=0.001)
+  #verbose=T
   k <- (dim(dat)[2] - 4)/2
   
   options(digits=10)
@@ -27,7 +29,7 @@ spm_discrete <- function(dat, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verb
   total_cols <- (1 + k + (k*(k+1))/2) + 2
   result <- matrix(nrow=0, ncol=total_cols,0)
   for(theta in theta_range) {
-    #theta = 0.1
+    #theta = 0.07
     ethetat <- exp(theta*dat[,3])
     newdat <- dat[,2] # Outcome
     newdat <- cbind(newdat,ethetat) #x0
@@ -68,13 +70,13 @@ spm_discrete <- function(dat, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verb
                     control=list(maxit = 250, trace=verbose))
     
     if(verbose) {cat(coef(res.pois))}
-    
+    res <- res.pois
     tryCatch({res <- glm(reg_formula, data=as.data.frame(newdat), family = binomial(link = log), 
                          start=coef(res.pois), 
                          control=list(maxit = 250, trace=verbose))
              },  
              error=function(e) {if(verbose  == TRUE) {print(e)}}, 
-             finally=res.pois
+             finally=function() {res <- res.pois}
              )
     
     coef <- -1*res$coefficients 
@@ -98,10 +100,13 @@ spm_discrete <- function(dat, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verb
       index_j <- index_j  + 1
     }
     colnames(newdat2) <- cnames
-  
+    #print(head(newdat2))
     reg_formula <- paste(cnames[1],"~", paste(cnames[2:length(cnames)],collapse='+'))
     
-    res <- lm(as.formula(reg_formula),data=as.data.frame(newdat2))
+    res <- lm(as.formula(reg_formula),data=as.data.frame(newdat2),na.action = na.omit)
+    #res <- gls(as.formula(reg_formula),data=as.data.frame(newdat2),na.action = na.omit)
+    #print(reg_formula)
+    #print(res)
     coef <- res$coefficients # intercept, y1
     parameters_lsq <- rbind(parameters_lsq, c(coef, sd(res$residuals), logLik(res)[1]))
   
@@ -142,7 +147,7 @@ spm_discrete <- function(dat, theta_range=seq(0.02,0.2,by=0.001), tol=NULL, verb
   #------end of calculating of Q-matrix--------#
   parameters_lsq <- unname(parameters_lsq);
   u <- parameters_lsq[,1]
-  R <- parameters_lsq[,2:(2+k-1)]
+  R <- t(parameters_lsq[,2:(2+k-1)])
   Sigma <- parameters_lsq[,(2+k)]
   
   pars1 <- list(theta=theta, mu0=mu0, b=b, Q=Q, u=u, R=R, Sigma=Sigma)
