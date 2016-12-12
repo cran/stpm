@@ -4,13 +4,11 @@
 \alias{prepare_data_cont}
 \title{Prepares continuouts-time dataset.}
 \usage{
-prepare_data_cont(longdat, vitstat, col.status.ind, col.id.ind, col.age.ind,
-  col.age.event.ind, col.covar.ind, verbose, impute)
+prepare_data_cont(merged.data, col.status.ind, col.id.ind, col.age.ind,
+  col.age.event.ind, col.covar.ind, verbose, impute, dt)
 }
 \arguments{
-\item{longdat}{a longitudinal study dataset.}
-
-\item{vitstat}{vital (mortality) statistics.}
+\item{merged.data}{a longitudinal study dataset.}
 
 \item{col.status.ind}{index of "status" column.}
 
@@ -25,6 +23,8 @@ prepare_data_cont(longdat, vitstat, col.status.ind, col.id.ind, col.age.ind,
 \item{verbose}{turns on/off verbosing output.}
 
 \item{impute}{Multiple imputation ndicator. If TRUE then missing observations will be imputed with multiple imputation.}
+
+\item{dt}{interval between observations.}
 }
 \description{
 Prepares continuouts-time dataset.

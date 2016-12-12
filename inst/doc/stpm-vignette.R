@@ -9,14 +9,9 @@
 library(stpm)
 # Reading longitude data:
 longdat <- read.csv(system.file("data","longdat.csv",package="stpm"))
-# Prepare data for optimization:
-vitstat <- read.csv(system.file("data","vitstat.csv",package="stpm"))
 
 ## ----echo=FALSE----------------------------------------------------------
 head(longdat)
-
-## ----echo=FALSE----------------------------------------------------------
-head(vitstat)
 
 ## ------------------------------------------------------------------------
 library(stpm)
@@ -68,10 +63,9 @@ ans <- spm_continuous(dat=data,
                       b = 1,
                       mu0 = 1.6e-5,
                       theta = 0.1,
-                      stopifbound = FALSE, maxeval=300,
+                      stopifbound = FALSE,
                       lb=c(-0.2, 60, 0.1e-6, 60, 0.1, 0.1e-5, 0.01), 
-                      ub=c(0, 140, 5e-06, 140, 3, 5e-5, 0.20),
-                      algorithm="NLOPT_LN_NELDERMEAD")
+                      ub=c(0, 140, 5e-06, 140, 3, 5e-5, 0.20))
 ans
 
 ## ------------------------------------------------------------------------
@@ -103,7 +97,6 @@ ans <- spm_continuous(dat=data,
                       b = b.d,
                       mu0 = mu0.d,
                       theta = theta.d,
-                      maxeval=150,
                       lb=c(-0.5, ifelse(a.d[2,1] > 0, a.d[2,1]-0.5*a.d[2,1], a.d[2,1]+0.5*a.d[2,1]), ifelse(a.d[1,2] > 0, a.d[1,2]-0.5*a.d[1,2], a.d[1,2]+0.5*a.d[1,2]), -0.5,  
                            80, 100, 
                            Q.d[1,1]-0.5*Q.d[1,1], ifelse(Q.d[2,1] > 0, Q.d[2,1]-0.5*Q.d[2,1], Q.d[2,1]+0.5*Q.d[2,1]), ifelse(Q.d[1,2] > 0, Q.d[1,2]-0.5*Q.d[1,2], Q.d[1,2]+0.5*Q.d[1,2]), Q.d[2,2]-0.5*Q.d[2,2],
@@ -117,7 +110,7 @@ ans <- spm_continuous(dat=data,
                            110, 220,
                            1.5, 2.5,
                            1.2e-4,
-                           0.10), algorithm = "NLOPT_LN_NELDERMEAD")
+                           0.10))
 ans
 
 

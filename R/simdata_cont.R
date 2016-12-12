@@ -23,6 +23,7 @@
 #' mu0 = mu0*exp(theta*t).
 #' @param nobs A number of observations (lines) for individual observations.
 #' @return A table with simulated data.
+#' @export
 #' @examples
 #' library(stpm)
 #' dat <- simdata_cont(N=50)
@@ -42,7 +43,7 @@ simdata_cont <- function(N=10,
                           dt=1, 
                           sd0=1,
                           nobs=NULL, 
-                          gomp=FALSE) {
+                          gomp=TRUE) {
   
   k <- length(ystart)
   

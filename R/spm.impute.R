@@ -214,6 +214,7 @@ getNextY.cont <- function(y1, t1, t2, a, f1, Q, f, b, mu0, theta, u, R) {
 #'@return A list(imputed, imputations)
 #'@return imputed An imputed dataset.
 #'@return imputations Temporary imputed datasets used in multiple imputaitons.
+#'@export
 #'@examples \dontrun{
 #'library(stpm) 
 #'##Data preparation ##
@@ -267,6 +268,7 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
         if(any(is.na(row.cur[seq(6, Ncol,by=2)])) & row.cur[2] == 0) {
           y1 <- row.cur[seq(5,Ncol,by=2)]
           y.next <- getNextY.discr.m(y1, pp$Ak2005$u, pp$Ak2005$R)
+          #y.next <- getNextY.discr(y1, pp$Ak2005$u, pp$Ak2005$R, pp$Ak2005$Sigma)
           row.cur[which(is.na(row.cur))] <- y.next[(which(is.na(row.cur)) - 6 ) %/% 2 + 1]
         }
         
@@ -275,7 +277,8 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
         next
       }
       
-      # Preprocessing of df #
+      
+      
       row.cur <- df[1, ]; row.next <- df[2, ]
   
       for(j in seq(5,Ncol,by=2)) {
@@ -288,8 +291,11 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
       if(any(is.na(row.cur[seq(6, Ncol,by=2)]))) {
         y1 <- row.cur[seq(5,Ncol,by=2)]
         y.next <- getNextY.discr.m(y1, pp$Ak2005$u, pp$Ak2005$R)
-        row.cur[which(is.na(row.cur))] <- y.next[(which(is.na(row.cur)) - 6 ) %/% 2 + 1]
+        #y.next <- getNextY.discr(y1, pp$Ak2005$u, pp$Ak2005$R, pp$Ak2005$Sigma)
         for(j in seq(6,Ncol,by=2)) {
+          if(is.na(row.cur[j])) {
+            row.cur[j] <- y.next[(j - 6) %/% 2 + 1]
+          }
           if(is.na(row.next[j-1])) { row.next[j-1] <- row.cur[j] }
         }
       }
@@ -298,11 +304,39 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
       df[2, ] <- row.next
       
       if(Nrec > 2) {
+        #### Preprocessing of df ####
+        for(i in 2:(Nrec-1)) {
+          row.cur <- df[i,]; row.prev <- df[i-1,]; row.next <- df[i+1,]
+          
+          for(j in seq(5, Ncol,by=2)) {
+            if(is.na(row.cur[j])) {
+              row.cur[j] <- row.prev[j+1]
+            } else {
+              row.prev[j+1] <- row.cur[j]
+            }
+          }
+          
+          for(j in seq(6, Ncol,by=2)) {
+            if(is.na(row.cur[j])) {
+              row.cur[j] <- row.next[j-1]
+            } else {
+              row.next[j-1] <- row.cur[j]
+            }
+          }
+          
+          df[i-1, ] <- row.prev
+          df[i, ] <- row.cur
+          df[i+1, ] <- row.next
+        }
+        
+        #### Main imputation loop ####
+        
         for(i in 2:(Nrec-1)) {
           row.cur <- df[i, ]; row.next <- df[i+1, ]
           y1 <- row.cur[seq(5,Ncol,by=2)]
           if(any(is.na(row.cur[seq(6, Ncol,by=2)]))) {
             y.next <- getNextY.discr.m(y1, pp$Ak2005$u, pp$Ak2005$R)
+            #y.next <- getNextY.discr(y1, pp$Ak2005$u, pp$Ak2005$R, pp$Ak2005$Sigma)
             for(j in seq(6,Ncol,by=2)) {
               if(is.na(row.cur[j])) { row.cur[j] <- y.next[(j - 6 ) %/% 2 + 1] }
               if(is.na(row.next[j-1])) { row.next[j-1] <- row.cur[j] }
@@ -318,7 +352,12 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
         if(any(is.na(row.cur[seq(6, Ncol,by=2)])) & row.cur[2] == 0) {
           y1 <- row.cur[seq(5,Ncol,by=2)]
           y.next <- getNextY.discr.m(y1, pp$Ak2005$u, pp$Ak2005$R)
-          row.cur[which(is.na(row.cur))] <- y.next[(which(is.na(row.cur)) - 6 ) %/% 2 + 1]
+          #y.next <- getNextY.discr(y1, pp$Ak2005$u, pp$Ak2005$R, pp$Ak2005$Sigma)
+          for(j in seq(6, Ncol, by=2)) {
+            if(is.na(row.cur[j])) {
+              row.cur[j] <- y.next[(j - 6) %/% 2 + 1]
+            }
+          }
         }
   
         df[Nrec, ] <- row.cur
