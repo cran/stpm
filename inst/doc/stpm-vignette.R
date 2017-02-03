@@ -26,15 +26,15 @@ head(data)
 ## ------------------------------------------------------------------------
 library(stpm)
 #Data simulation (200 individuals)
-data <- simdata_discr(N=200)
+data <- simdata_discr(N=100)
 #Estimation of parameters
 pars <- spm_discrete(data)
 pars
 
 ## ------------------------------------------------------------------------
 library(stpm)
-#Simulate some data for 100 individuals
-data <- simdata_cont(N=100)
+#Simulate some data for 50 individuals
+data <- simdata_cont(N=50)
 head(data)
 #Estimate parameters
 # a=-0.05, f1=80, Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08 are starting values for estimation procedure
@@ -44,7 +44,7 @@ pars
 ## ------------------------------------------------------------------------
 library(stpm)
 #Data preparation:
-n <- 50
+n <- 10
 data <- simdata_time_dep(N=n)
 # Estimation:
 opt.par <- spm_time_dep(data, 
@@ -54,7 +54,7 @@ opt.par
 
 ## ------------------------------------------------------------------------
 library(stpm)
-data <- simdata_cont(N=100, ystart = 80, a = -0.1, Q = 1e-06, mu0 = 1e-5, theta = 0.08, f1 = 80, f=80, b=1, dt=1, sd0=5)
+data <- simdata_cont(N=10, ystart = 80, a = -0.1, Q = 1e-06, mu0 = 1e-5, theta = 0.08, f1 = 80, f=80, b=1, dt=1, sd0=5)
 ans <- spm_continuous(dat=data,
                       a = -0.1,
                       f1 = 82, 
@@ -71,7 +71,7 @@ ans
 ## ------------------------------------------------------------------------
 library(stpm)
 
-data <- simdata_cont(N=100, 
+data <- simdata_cont(N=10, 
                      a=matrix(c(-0.1,  0.001, 0.001, -0.1), nrow = 2, ncol = 2, byrow = T),
                      f1=t(matrix(c(100, 200), nrow = 2, ncol = 1, byrow = F)),
                      Q=matrix(c(1e-06, 1e-7, 1e-7,  1e-06), nrow = 2, ncol = 2, byrow = T),
@@ -169,9 +169,9 @@ pars
 
 ## ---- eval=T-------------------------------------------------------------
 library(stpm)
-data.genetic <- sim_pobs(N=10, mode='observed')
+data.genetic <- sim_pobs(N=5, mode='observed')
 head(data.genetic)
-data.nongenetic <- sim_pobs(N=50, mode='unobserved')
+data.nongenetic <- sim_pobs(N=10, mode='unobserved')
 head(data.nongenetic)
 #Parameters estimation:
 pars <- spm_pobs(x=data.genetic, y = data.nongenetic, mode='combined')
