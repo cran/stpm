@@ -83,10 +83,9 @@ getNextY.discr <- function(y1, u, R, Sigma) {
 }
 
 #' An internal function to compute next m based on dicrete-time model 
-#' (Akushevich et. al., 2005)
 #' @param y1 y1
-#' @param u u (see Akushevich et. al, 2005)
-#' @param R R (see Akushevich et. al, 2005)
+#' @param u u
+#' @param R R
 #' @return m Next value of m (see Yashin et. al, 2007)
 getNextY.discr.m <- function(y1, u, R) {
   m <- u + R %*% y1
@@ -94,10 +93,9 @@ getNextY.discr.m <- function(y1, u, R) {
 }
 
 #' An internal function to compute previous m based on discrete-time model
-#' (Akushevich et. al., 2005)
 #' @param y2 y2
-#' @param u u (see Akushevich et. al, 2005)
-#' @param R R (see Akushevich et. al, 2005)
+#' @param u u
+#' @param R R
 #' @return m Next value of m (see Yashin et. al, 2007)
 getPrevY.discr.m <- function(y2, u, R) {
   m <- solve(R) %*% (y2 - u)
@@ -106,11 +104,11 @@ getPrevY.discr.m <- function(y2, u, R) {
 
 #' An internal function to compute previous value of
 #' physiological variable Y based on 
-#' discrete-time model (Akushevich et. al., 2005)
+#' discrete-time model
 #' @param y2 y2
-#' @param u u (see Akushevich et. al, 2005)
-#' @param R R (see Akushevich et. al, 2005)
-#' @param Sigma Sigma (see Akushevich et. al, 2005)
+#' @param u u
+#' @param R R
+#' @param Sigma Sigma
 #' @return y1 Previous value of y
 getPrevY.discr <- function(y2, u, R, Sigma) {
   eps<-matrix(nrow=dim(R)[1], ncol=1)
@@ -267,7 +265,7 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
         }
         if(any(is.na(row.cur[seq(6, Ncol,by=2)])) & row.cur[2] == 0) {
           y1 <- row.cur[seq(5,Ncol,by=2)]
-          y.next <- getNextY.discr.m(y1, pp$Ak2005$u, pp$Ak2005$R)
+          y.next <- getNextY.discr.m(t(as.matrix(y1)), pp$Ak2005$u, pp$Ak2005$R)
           #y.next <- getNextY.discr(y1, pp$Ak2005$u, pp$Ak2005$R, pp$Ak2005$Sigma)
           row.cur[which(is.na(row.cur))] <- y.next[(which(is.na(row.cur)) - 6 ) %/% 2 + 1]
         }
@@ -290,7 +288,7 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
       }
       if(any(is.na(row.cur[seq(6, Ncol,by=2)]))) {
         y1 <- row.cur[seq(5,Ncol,by=2)]
-        y.next <- getNextY.discr.m(y1, pp$Ak2005$u, pp$Ak2005$R)
+        y.next <- getNextY.discr.m(t(as.matrix(y1)), pp$Ak2005$u, pp$Ak2005$R)
         #y.next <- getNextY.discr(y1, pp$Ak2005$u, pp$Ak2005$R, pp$Ak2005$Sigma)
         for(j in seq(6,Ncol,by=2)) {
           if(is.na(row.cur[j])) {
@@ -335,7 +333,7 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
           row.cur <- df[i, ]; row.next <- df[i+1, ]
           y1 <- row.cur[seq(5,Ncol,by=2)]
           if(any(is.na(row.cur[seq(6, Ncol,by=2)]))) {
-            y.next <- getNextY.discr.m(y1, pp$Ak2005$u, pp$Ak2005$R)
+            y.next <- getNextY.discr.m(t(as.matrix(y1)), pp$Ak2005$u, pp$Ak2005$R)
             #y.next <- getNextY.discr(y1, pp$Ak2005$u, pp$Ak2005$R, pp$Ak2005$Sigma)
             for(j in seq(6,Ncol,by=2)) {
               if(is.na(row.cur[j])) { row.cur[j] <- y.next[(j - 6 ) %/% 2 + 1] }
@@ -351,7 +349,7 @@ spm.impute <- function(dataset, minp=5, theta_range=seq(0.01, 0.2, by=0.001)) {
         row.cur <- df[Nrec, ]
         if(any(is.na(row.cur[seq(6, Ncol,by=2)])) & row.cur[2] == 0) {
           y1 <- row.cur[seq(5,Ncol,by=2)]
-          y.next <- getNextY.discr.m(y1, pp$Ak2005$u, pp$Ak2005$R)
+          y.next <- getNextY.discr.m(t(as.matrix(y1)), pp$Ak2005$u, pp$Ak2005$R)
           #y.next <- getNextY.discr(y1, pp$Ak2005$u, pp$Ak2005$R, pp$Ak2005$Sigma)
           for(j in seq(6, Ncol, by=2)) {
             if(is.na(row.cur[j])) {

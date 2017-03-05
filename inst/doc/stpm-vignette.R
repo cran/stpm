@@ -8,7 +8,7 @@
 ## ----results='hide',warning=FALSE,echo=FALSE,message=FALSE---------------
 library(stpm)
 # Reading longitude data:
-longdat <- read.csv(system.file("data","longdat.csv",package="stpm"))
+longdat <- read.csv(system.file("extdata","longdat.csv",package="stpm"))
 
 ## ----echo=FALSE----------------------------------------------------------
 head(longdat)
