@@ -1,4 +1,4 @@
-ad2334410cda7ae7959d3a493aab7b65 *DESCRIPTION
+30d4cb06781e38736e772672f41ad3eb *DESCRIPTION
 3b72926f74f95464153264ac68f04548 *NAMESPACE
 a5a3de95ca8bfdb27615c12a58e74e2f *R/general.R
 cb68b39b26bba93d6d43e58d110bfdb7 *R/hes_spm.r
@@ -13,7 +13,7 @@ a5713da3435e1f3f520dd59058428046 *R/simdata_gamma_frailty.R
 2bcfc76bbead36f38c6b1d314c4ef7ec *R/simdata_pobs_cont.R
 12e25ad2f72a1ccf1b095bb935b12779 *R/simdata_time-dep.R
 7db869b04ab7d2592b7768089d266109 *R/spm.R
-7e514980d51e64ae43fe8344fbab08f9 *R/spm.impute.R
+d702fa51cae72d4c67d645d8c6ab3f42 *R/spm.impute.R
 17c2aeeeec4cd61262be8c0703149918 *R/spm_con_1d.r
 6d52e7c2f454721d8726314f3d352e87 *R/spm_con_1d_g.r
 3e48a63a9a4f1c009a0d42407329bb7f *R/spm_continuous.R
@@ -26,16 +26,16 @@ a0b34f01b8e7bef007e058292d1ac89d *R/spm_projection.R
 34c5d5d2fb8b713a25389bd3f73075d6 *README.md
 54258c5bea8b53d6a18c8834afeb25d3 *build/vignette.rds
 2abe0d80ae499683518943c0bfa07e02 *data/ex_spmcon1dg.rda
-893363302ff4606092a6597e19c111e4 *inst/NEWS
+d41237335cb4723d2dc75f2577254ea3 *inst/NEWS
 b0c7d33fe44f428e97cac0c5e39a84e4 *inst/doc/stpm-vignette.R
 ddaa425f2fc3acfd01e6eeb3db0d22d4 *inst/doc/stpm-vignette.Rmd
-5fcb66f79dfea35a0d1c491d0248ccfb *inst/doc/stpm-vignette.html
+5e49612b691911c93b1f4ce374ee46af *inst/doc/stpm-vignette.html
 36ef65c34e6bf56e2743909da59308cc *inst/extdata/longdat.csv
 c0a9309ef56c708ff43a587d425d67ac *inst/extdata/vitstat.csv
 dabab47ce5cbd6f08e5ebf7a3275d36b *man/ex_data.Rd
 9a464f65efa104380c7121b8516c0eb6 *man/func1.Rd
-660a9910ca1cc662396ce60cf6590051 *man/getNextY.Rd
 22f4f474fc7f49ac5d36a8ab9458e165 *man/getNextY.cont.Rd
+33fe3d038a0e53673633691bc72a5cc5 *man/getNextY.cont2.Rd
 8c2a927e3a2199591ad8edea897fc12c *man/getNextY.discr.Rd
 843eacfa619f0c5499d9a4ab4c27a9a8 *man/getNextY.discr.m.Rd
 0f4b70791d5d84465e2c244ee08f7fd3 *man/getPrevY.discr.Rd
