@@ -22,6 +22,7 @@
 #' @param gomp A flag (FALSE by default). When it is set, then time-dependent exponential form of mu0 and Q are used:
 #' mu0 = mu0*exp(theta*t).
 #' @param nobs A number of observations (lines) for individual observations.
+#' @param format Data format: "long" (default), "short".
 #' @return A table with simulated data.
 #' @export
 #' @examples
@@ -43,7 +44,8 @@ simdata_cont <- function(N=10,
                           dt=1, 
                           sd0=1,
                           nobs=NULL, 
-                          gomp=TRUE) {
+                          gomp=TRUE,
+                         format="long") {
   
   k <- length(ystart)
   
@@ -77,7 +79,13 @@ simdata_cont <- function(N=10,
     data_names <- c(data_names, paste("y",n, sep=''), paste("y",n, ".next", sep=''))
   }
   colnames(simulated) <- c("id", "xi", "t1", "t2", data_names)
+  simulated <- data.frame(simulated)
   
-  invisible(data.frame(simulated))
+  if(format == "short")
+  {
+    simulated <- make.short.format(simulated)
+  }
+  
+  invisible(return(simulated))
 }
 

@@ -1,3 +1,16 @@
+## ---- message=FALSE, echo=FALSE------------------------------------------
+library(knitcitations)
+cleanbib()
+options("citation_format" = "pandoc")
+r<-citep("10.1016/0040-5809(77)90005-3") 
+r<-citep("10.1016/j.mbs.2006.11.006")
+r<-citep("10.1080/08898480590932296")
+r<-citep("10.1007/s10522-006-9073-3")
+r<-citep("10.1016/j.jtbi.2009.01.023")
+r<-citep("10.3389/fpubh.2014.00228")
+r<-citep("10.1002/gepi.22058")
+write.bibtex(file="references.bib")
+
 ## ----eval=FALSE----------------------------------------------------------
 #  install.packages("stpm")
 
@@ -13,14 +26,26 @@ longdat <- read.csv(system.file("extdata","longdat.csv",package="stpm"))
 ## ----echo=FALSE----------------------------------------------------------
 head(longdat)
 
-## ------------------------------------------------------------------------
-library(stpm)
-data <- simdata_discr(N=10) # simulate data for 10 individuals
+## ---- echo=FALSE, message=FALSE------------------------------------------
+data <- simdata_discr(N=1000, format="short")
+
+## ---- echo=FALSE---------------------------------------------------------
+head(data)
+
+## ---- echo=FALSE, message=FALSE------------------------------------------
+data <- simdata_discr(N=1000, format="long")
+
+## ---- echo=FALSE---------------------------------------------------------
 head(data)
 
 ## ------------------------------------------------------------------------
 library(stpm)
-data <- simdata_cont(N=5) # simulate data for 5 individuals
+data <- simdata_discr(N=10) # simulate data for 10 individuals, "long" format (default)
+head(data)
+
+## ------------------------------------------------------------------------
+library(stpm)
+data <- simdata_cont(N=5, format="short") # simulate data for 5 individuals, "short" format
 head(data)
 
 ## ------------------------------------------------------------------------
@@ -176,4 +201,75 @@ head(data.nongenetic)
 #Parameters estimation:
 pars <- spm_pobs(x=data.genetic, y = data.nongenetic, mode='combined')
 pars
+
+## ---- eval=T-------------------------------------------------------------
+library(stpm) 
+data(ex_spmcon1dg)
+head(ex_data$spm_data)
+head(ex_data$gene_data)
+res <- spm_con_1d_g(spm_data=ex_data$spm_data, 
+                    gene_data=ex_data$gene_data, 
+                    a = -0.02, b=0.2, q=0.01, f=3, f1=3, mu0=0.01, theta=1e-05, 
+                    upper=c(-0.01,3,0.1,10,10,0.1,1e-05), lower=c(-1,0.01,0.00001,1,1,0.001,1e-05), 
+                    effect=c('q'))
+res
+
+## ---- eval=TRUE, message=FALSE-------------------------------------------
+library(stpm)
+
+#######################################################################
+############## One dimensional case (one covariate) ###################
+#######################################################################
+
+## Data preparation (short format)#
+data <- simdata_discr(N=1000, dt = 2, format="short")
+
+miss.id <- sample(x=dim(data)[1], size=round(dim(data)[1]/4)) # ~25% missing data
+incomplete.data <- data
+incomplete.data[miss.id,4] <- NA
+# End of data preparation #
+
+##### Multiple imputation with SPM #####
+imp.data <- spm.impute(x=incomplete.data, id=1, case="xi", t1=3, covariates="y1", minp=1, theta_range=seq(0.075, 0.09, by=0.001))$imputed
+
+##### Look at the incomplete data with missings #####
+head(incomplete.data)
+
+##### Look at the imputed data #####
+head(imp.data)
+
+#########################################################
+################ Two-dimensional case ###################
+#########################################################
+
+## Parameters for data simulation #
+a <- matrix(c(-0.05, 0.01, 0.01, -0.05), nrow=2)
+f1 <- matrix(c(90, 30), nrow=1, byrow=FALSE)
+Q <- matrix(c(1e-7, 1e-8, 1e-8, 1e-7), nrow=2)
+f0 <- matrix(c(80, 25), nrow=1, byrow=FALSE)
+b <- matrix(c(5, 3), nrow=2, byrow=TRUE)
+mu0 <- 1e-04
+theta <- 0.07
+ystart <- matrix(c(80, 25), nrow=2, byrow=TRUE)
+
+## Data preparation #
+data <- simdata_discr(N=1000, a=a, f1=f1, Q=Q, f=f0, b=b, ystart=ystart, mu0 = mu0, theta=theta, dt=2, format="short")
+
+## Delete some observations in order to have approx. 25% missing data
+incomplete.data <- data
+miss.id <- sample(x=dim(data)[1], size=round(dim(data)[1]/4)) 
+incomplete.data <- data
+incomplete.data[miss.id,4] <- NA
+miss.id <- sample(x=dim(data)[1], size=round(dim(data)[1]/4)) 
+incomplete.data[miss.id,5] <- NA
+## End of data preparation #
+
+###### Multiple imputation with SPM #####
+imp.data <- spm.impute(x=incomplete.data, id=1, case="xi", t1=3, covariates=c("y1", "y2"), minp=1, theta_range=seq(0.060, 0.07, by=0.001))$imputed
+
+###### Look at the incomplete data with missings #####
+head(incomplete.data)
+
+###### Look at the imputed data #####
+head(imp.data)
 

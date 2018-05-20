@@ -18,6 +18,7 @@
 #' @param tend A number, defines final time (105 by default).
 #' @param dt A time step (1 by default).
 #' @param nobs A number, defines a number of observations (lines) for an individual, NULL by default.
+#' @param format Data format: "long" (default), "short".
 #' @return A table with simulated data.
 #' @export
 #' @examples
@@ -37,7 +38,8 @@ simdata_discr <- function(N=100,
                           tstart=30, 
                           tend=105, 
                           dt=1,
-                          nobs=NULL) {
+                          nobs=NULL,
+                          format="long") {
   
   k <- length(ystart)
   
@@ -75,7 +77,13 @@ simdata_discr <- function(N=100,
     data_names <- c(data_names, paste("y",n, sep=''), paste("y",n, ".next", sep=''))
   }
   colnames(simulated) <- c("id", "xi", "t1", "t2", data_names)
+  simulated <- data.frame(simulated)
   
-  invisible(data.frame(simulated))
+  if(format == "short")
+  {
+      simulated <- make.short.format(simulated)
+  }
+  
+  invisible(return(simulated))
 }
 

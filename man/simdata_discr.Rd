@@ -6,7 +6,7 @@
 \usage{
 simdata_discr(N = 100, a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5,
   mu0 = 1e-05, theta = 0.08, ystart = 80, tstart = 30, tend = 105,
-  dt = 1, nobs = NULL)
+  dt = 1, nobs = NULL, format = "long")
 }
 \arguments{
 \item{N}{Number of individuals}
@@ -37,6 +37,8 @@ is simulated via uniform(a,b) distribution.}
 \item{dt}{A time step (1 by default).}
 
 \item{nobs}{A number, defines a number of observations (lines) for an individual, NULL by default.}
+
+\item{format}{Data format: "long" (default), "short".}
 }
 \value{
 A table with simulated data.

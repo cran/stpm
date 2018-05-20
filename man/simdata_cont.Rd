@@ -6,7 +6,7 @@
 \usage{
 simdata_cont(N = 10, a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5,
   mu0 = 1e-05, theta = 0.08, ystart = 80, tstart = 30, tend = 105,
-  dt = 1, sd0 = 1, nobs = NULL, gomp = TRUE)
+  dt = 1, sd0 = 1, nobs = NULL, gomp = TRUE, format = "long")
 }
 \arguments{
 \item{N}{Number of individuals.}
@@ -44,6 +44,8 @@ characterizes a strength of the random disturbances from Wiener process W(t).}
 
 \item{gomp}{A flag (FALSE by default). When it is set, then time-dependent exponential form of mu0 and Q are used:
 mu0 = mu0*exp(theta*t).}
+
+\item{format}{Data format: "long" (default), "short".}
 }
 \value{
 A table with simulated data.

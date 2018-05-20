@@ -1,5 +1,9 @@
-New for version 1.6.8
+New for version 1.6.9
 ======================
 * Version released
+* Names "Ya2007", "Ak2005" replaced with "cmodel" and "dmodel"
+* Linear terms added to continuous-time model
 * Documentation updated
+* 'impute' parameter flag deleted from prepare_data() function
+* Discreta time processed data set was deleted from prepare_data() function output
 * Minor bug fixes

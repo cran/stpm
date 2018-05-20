@@ -8,23 +8,14 @@
 #include <math.h> 
 #include <iostream>
 #include <RcppArmadillo.h>
+#include "spm_integral_md.h"
 // [[Rcpp::depends(RcppArmadillo)]]
 
 using namespace Rcpp;
 using namespace std;
 
-/*============GLOBAL VARIABLES===========*/
-/*=====END OF GLOBAL VARIABLES===========*/
-
 /*============FUNCTION DEFINITIONS*/
-
 bool gomp = false;
-
-long double mu(double t, arma::mat y1, arma::mat gamma1, arma::mat fH, arma::mat f1H, double mu0H, double thetaH, arma::mat QH);
-void func1(arma::mat *res, double t, arma::mat *y, arma::mat fH, arma::mat f1H, arma::mat aH, arma::mat bH, arma::mat QH, double theta);
-arma::mat Q(double t, arma::mat QH, double theta);
-void func1(double t, arma::mat *y, arma::mat fH, arma::mat f1H, arma::mat aH, arma::mat bH, arma::mat QH, double theta);
-
 
 long double mu(double t, arma::mat y1, arma::mat gamma1, arma::mat fH, arma::mat f1H, double mu0H, double thetaH, arma::mat QH) {
   arma::mat hfH;
@@ -46,6 +37,7 @@ long double mu(double t, arma::mat y1, arma::mat gamma1, arma::mat fH, arma::mat
 }
 
 
+
 //Calculating m (y[1]) & gamma(y[2]):
 void func1(arma::mat *res, double t, arma::mat *y, arma::mat fH, arma::mat f1H, arma::mat aH, 
           arma::mat bH, arma::mat QH, double theta) {
@@ -60,6 +52,7 @@ void func1(arma::mat *res, double t, arma::mat *y, arma::mat fH, arma::mat f1H, 
   res[1] = aH*y[1] + y[1]*aH.t() + bH*bH.t() - 2.00 * ((y[1]*Q(t, QH, theta))*y[1]);
   //std::cout << "theta: " << theta << " QH:" << QH << " y[0]:" << y[0] << " y[1]:" << y[1] << " Q:" << Q(t, QH, theta) << " res0:" << res[0] << " res1:" << res[1]<< std::endl;
 }
+
 
 //Calculating m (y[1]) & gamma(y[2]):
 std::vector<arma::mat> func1(double t, std::vector<arma::mat> y, arma::mat fH, arma::mat f1H, arma::mat aH, 

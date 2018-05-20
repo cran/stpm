@@ -4,10 +4,21 @@
 \alias{spm.impute}
 \title{Multiple Data Imputation with SPM}
 \usage{
-spm.impute(dataset, minp = 5, theta_range = seq(0.01, 0.2, by = 0.001))
+spm.impute(x, id = 1, case = 2, t1 = 3, t2 = 3, covariates = 4,
+  minp = 5, theta_range = seq(0.01, 0.2, by = 0.001))
 }
 \arguments{
-\item{dataset}{A longitudinal dataset with missing observations}
+\item{x}{A longitudinal dataset with missing observations}
+
+\item{id}{A name (text) or index (numeric) of ID column. Default: 1}
+
+\item{case}{A case status column name (text) or index (numeric). Default: 2}
+
+\item{t1}{A t1 (or t if short format is used) column name (text) or index (numeric). Default: 3}
+
+\item{t2}{A t2 column name (if long format is used) (text) or index (numeric). Default: 4}
+
+\item{covariates}{A list of covariate column names or indices. Default: 5}
 
 \item{minp}{Number of imputations. Default: 5}
 
@@ -39,7 +50,7 @@ p <- spm_discrete(data, theta_range = seq(0.075, 0.09, by=0.001))
 p
 
 ##### Multiple imputation with SPM #####
-imp.data <- spm.impute(dataset=incomplete.data, 
+imp.data <- spm.impute(x=incomplete.data, 
                       minp=5, 
                       theta_range=seq(0.075, 0.09, by=0.001))$imputed
 head(imp.data)
