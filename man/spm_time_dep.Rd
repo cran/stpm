@@ -2,14 +2,13 @@
 % Please edit documentation in R/spm_time-dependent.R
 \name{spm_time_dep}
 \alias{spm_time_dep}
-\title{spm_time_dep : a function for the model with 
-time-dependent model parameters.}
+\title{A function for the model with time-dependent model parameters.}
 \usage{
 spm_time_dep(x, start = list(a = -0.05, f1 = 80, Q = 2e-08, f = 80, b = 5, mu0
   = 0.001), frm = list(at = "a", f1t = "f1", Qt = "Q", ft = "f", bt = "b",
   mu0t = "mu0"), stopifbound = FALSE, lb = NULL, ub = NULL,
   verbose = FALSE, opts = list(algorithm = "NLOPT_LN_NELDERMEAD", maxeval =
-  100, ftol_rel = 1e-08))
+  100, ftol_rel = 1e-08), lrtest = FALSE)
 }
 \arguments{
 \item{x}{Input data table.}
@@ -32,7 +31,12 @@ achieves lower or upper boundaries. Default: \code{FALSE}.}
 
 \item{opts}{A list of options for \code{nloptr}.
 Default value: \code{opt=list(algorithm="NLOPT_LN_NELDERMEAD", 
-maxeval=100, ftol_rel=1e-8)}.
+maxeval=100, ftol_rel=1e-8)}.}
+
+\item{lrtest}{Indicates should Likelihood-Ratio test be performed.
+Possible values: \code{TRUE}, \code{H01}, \code{H02}, \code{H03},
+\code{H04}, \code{H05} (see package Vignette for details)
+Default value: \code{FALSE}.
 Please see \code{nloptr} documentation for more information.}
 }
 \value{
@@ -49,8 +53,7 @@ message A message given by \code{nloptr} optimization function
 (see documentation for nloptr package).
 }
 \description{
-spm_time_dep : a function for the model with 
-time-dependent model parameters.
+A function for the model with time-dependent model parameters.
 }
 \examples{
 library(stpm)
@@ -60,7 +63,6 @@ data <- simdata_time_dep(N=n)
 # Estimation:
 opt.par <- spm_time_dep(data)
 opt.par
-
 }
 \references{
 Yashin, A. et al (2007), Health decline, 
