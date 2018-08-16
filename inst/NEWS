@@ -1,5 +1,4 @@
-New for version 1.7.5
+New for version 1.7.7
 ======================
 * Version released
-* spm_con_1d_g: generalized inverse added in order to invert hessian.
-* Bug fixes
+* spm_con_1d_g: genetic test for parameter f1 added.
