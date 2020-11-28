@@ -1,55 +1,55 @@
-## ---- message=FALSE, echo=FALSE------------------------------------------
-library(knitcitations)
-cleanbib()
-options("citation_format" = "pandoc")
-r<-citep("10.1016/0040-5809(77)90005-3") 
-r<-citep("10.1016/j.mbs.2006.11.006")
-r<-citep("10.1080/08898480590932296")
-r<-citep("10.1007/s10522-006-9073-3")
-r<-citep("10.1016/j.jtbi.2009.01.023")
-r<-citep("10.3389/fpubh.2014.00228")
-r<-citep("10.1002/gepi.22058")
-r<-citep("10.3389/fpubh.2016.00003")
-write.bibtex(file="references.bib")
+## ---- message=FALSE, echo=FALSE, eval=FALSE-----------------------------------
+#  library(knitcitations)
+#  cleanbib()
+#  options("citation_format" = "pandoc")
+#  r<-citep("10.1016/0040-5809(77)90005-3")
+#  r<-citep("10.1016/j.mbs.2006.11.006")
+#  r<-citep("10.1080/08898480590932296")
+#  r<-citep("10.1007/s10522-006-9073-3")
+#  r<-citep("10.1016/j.jtbi.2009.01.023")
+#  r<-citep("10.3389/fpubh.2014.00228")
+#  r<-citep("10.1002/gepi.22058")
+#  r<-citep("10.3389/fpubh.2016.00003")
+#  write.bibtex(file="references.bib")
 
-## ----eval=FALSE----------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  install.packages("stpm")
 
-## ----eval=FALSE----------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  require(devtools)
 #  devtools::install_github("izhbannikov/stpm")
 
-## ----results='hide',warning=FALSE,echo=FALSE,message=FALSE---------------
+## ----results='hide',warning=FALSE,echo=FALSE,message=FALSE--------------------
 library(stpm)
 # Reading longitude data:
 longdat <- read.csv(system.file("extdata","longdat.csv",package="stpm"))
 
-## ----echo=FALSE----------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 head(longdat)
 
-## ---- echo=FALSE, message=FALSE------------------------------------------
+## ---- echo=FALSE, message=FALSE-----------------------------------------------
 data <- simdata_discr(N=1000, format="short")
 
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 head(data)
 
-## ---- echo=FALSE, message=FALSE------------------------------------------
+## ---- echo=FALSE, message=FALSE-----------------------------------------------
 data <- simdata_discr(N=1000, format="long")
 
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 head(data)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 data <- simdata_discr(N=10) # simulate data for 10 individuals, "long" format (default)
 head(data)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 data <- simdata_cont(N=5, format="short") # simulate data for 5 individuals, "short" format
 head(data)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 #Data simulation (200 individuals)
 data <- simdata_discr(N=100)
@@ -57,7 +57,7 @@ data <- simdata_discr(N=100)
 pars <- spm_discrete(data)
 pars
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 #Simulate some data for 50 individuals
 data <- simdata_cont(N=50)
@@ -67,7 +67,7 @@ head(data)
 pars <- spm_continuous(dat=data,a=-0.05, f1=80, Q=2e-8, f=80, b=5, mu0=2e-5, theta=0.08)
 pars
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 #Data preparation:
 n <- 10
@@ -78,7 +78,7 @@ opt.par <- spm_time_dep(data,
                         frm = list(at = "a", f1t = "f1", Qt = "Q", ft = "f", bt = "b", mu0t= "mu0"))
 opt.par
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 data <- simdata_cont(N=10, ystart = 80, a = -0.1, Q = 1e-06, mu0 = 1e-5, theta = 0.08, f1 = 80, f=80, b=1, dt=1, sd0=5)
 ans <- spm_continuous(dat=data,
@@ -94,7 +94,7 @@ ans <- spm_continuous(dat=data,
                       ub=c(0, 140, 5e-06, 140, 3, 5e-5, 0.20))
 ans
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 
 data <- simdata_cont(N=10, 
@@ -140,7 +140,7 @@ ans <- spm_continuous(dat=data,
 ans
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 n <- 10
 data <- simdata_time_dep(N=n)
 # Estimation:
@@ -150,7 +150,7 @@ opt.par
 
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 n <- 10
 data <- simdata_time_dep(N=n)
@@ -158,7 +158,7 @@ data <- simdata_time_dep(N=n)
 opt.par <- spm_time_dep(data, frm = list(at="a", f1t="f1", Qt="Q", ft="0", bt="b", mu0t="mu0"))
 opt.par
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 
 n <- 10
 data <- simdata_time_dep(N=n)
@@ -170,29 +170,29 @@ opt.par <- spm_time_dep(data, frm = list(at="a", f1t="f1", Qt="Q", ft="0", bt="b
 opt.par
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm) 
 dat <- simdata_cont(N=500)
 colnames(dat) <- c("id", "xi", "t1", "t2", "y", "y.next")
 res <- spm_con_1d(as.data.frame(dat), a=-0.05, b=2, q=1e-8, f=80, f1=90, mu0=1e-3, theta=0.08)
 res
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(stpm)
 data <- simdata_discr(N=10)
 head(data)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 library(stpm)
 data <- simdata_cont(N=10)
 head(data)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 library(stpm)
 data <- sim_pobs(N=10)
 head(data)
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 library(stpm)
 #Generating data:
 data <- sim_pobs(N=10)
@@ -201,7 +201,7 @@ head(data)
 pars <- spm_pobs(x=data)
 pars
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 library(stpm)
 data.genetic <- sim_pobs(N=5, mode='observed')
 head(data.genetic)
@@ -211,7 +211,7 @@ head(data.nongenetic)
 pars <- spm_pobs(x=data.genetic, y = data.nongenetic, mode='combined')
 pars
 
-## ---- eval=T-------------------------------------------------------------
+## ---- eval=T------------------------------------------------------------------
 library(stpm) 
 data(ex_spmcon1dg)
 head(ex_data$spm_data)
@@ -223,7 +223,7 @@ res <- spm_con_1d_g(spm_data=ex_data$spm_data,
                     effect=c('q'), method = "tnewton")
 res
 
-## ---- eval=TRUE, message=FALSE-------------------------------------------
+## ---- eval=TRUE, message=FALSE------------------------------------------------
 library(stpm)
 
 #######################################################################
@@ -282,7 +282,7 @@ head(incomplete.data)
 ###### Look at the imputed data #####
 head(imp.data)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 #library(stpm)
 #data <- simdata_discr(N=100, format="long")
 #res <- spm_discrete(data)
@@ -293,7 +293,7 @@ head(imp.data)
 #predicted <- predict(object=res, data=df, dt=3)
 #head(predicted)
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  library(stpm)
 #  n <- 1000
 #  

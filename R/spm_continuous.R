@@ -24,6 +24,8 @@
 #'Default value: \code{opt=list(algorithm="NLOPT_LN_NELDERMEAD", 
 #'maxeval=100, ftol_rel=1e-8)}.
 #'Please see \code{nloptr} documentation for more information.
+#'@param logmu0 Natural logarith of baseline mortality.
+#'Default: \code{FALSE}.
 #'@return A set of estimated parameters a, f1, Q, f, b, mu0, theta and
 #'additional variable \code{limit} which indicates if any parameter 
 #'achieved lower or upper boundary conditions (FALSE by default).
@@ -58,7 +60,8 @@ spm_continuous <- function(dat,
                            pinv.tol=0.01,
                            gomp=FALSE,
                            opts=list(algorithm="NLOPT_LN_NELDERMEAD", 
-                                          maxeval=100, ftol_rel=1e-8)) {
+                                          maxeval=100, ftol_rel=1e-8),
+                           logmu0=FALSE) {
   
   
   
@@ -87,7 +90,7 @@ spm_continuous <- function(dat,
     lower_bound <- c(lower_bound, unlist(lapply(start:end, function(n){params[n] + ifelse(params[n] > 0, -0.1*params[n], 0.1*params[n]) })) )
     # mu0
     start=end+1; end=start
-    lower_bound <- c( lower_bound, params[start:end] - 0.1*params[start:end])
+    lower_bound <- c( lower_bound, params[start:end] + ifelse(params[start:end] > 0, -0.1*params[start:end], 0.1*params[start:end]))
     # theta
     start=end+1; end=start
     lower_bound <- c( lower_bound, params[start:end] - 0.1*params[start:end])
@@ -122,7 +125,7 @@ spm_continuous <- function(dat,
     upper_bound <- c(upper_bound, unlist(lapply(start:end, function(n){ifelse(params[n] > 0, params[n]+0.1*params[n], params[n]-0.1*params[n]) })))
     # mu0
     start=end+1; end=start
-    upper_bound <- c( upper_bound, params[start:end] + 0.1*params[start:end])
+    upper_bound <- c( upper_bound, ifelse(params[start:end] > 0, params[start:end]+0.1*params[start:end], params[start:end]-0.1*params[start:end]))
     # theta
     start=end+1; end=start
     upper_bound <- c( upper_bound, params[start:end] + 0.1*params[start:end])
@@ -275,8 +278,10 @@ spm_continuous <- function(dat,
     
     if(stopflag == FALSE) {
       dims <- dim(dat)
-      res <- .Call("complikMD", dat, dims[1], dims[2], a, f1, Q, b, f, mu0, theta, k, pinv.tol, gomp)
+      res <- .Call("complikMD", dat, dims[1], dims[2], a, f1, Q, b, f, mu0, theta, k, pinv.tol, gomp, logmu0)
+      
       assign("results", results_tmp, envir=baseenv())
+      
       iteration <<- iteration + 1
       L.prev <<- res
       
@@ -331,6 +336,11 @@ spm_continuous <- function(dat,
       limit <- TRUE
     }
   }
+  
+  if(logmu0) { 
+      final_results[["mu0"]] <- exp(final_results[["mu0"]])
+  }
+  
   final_results$limit <- limit
   #assign("results", final_results, envir=baseenv())
   class(final_results) <- "spm.continuous"
