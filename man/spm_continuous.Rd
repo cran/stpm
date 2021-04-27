@@ -87,6 +87,7 @@ intervals with different lengths.
 }
 \examples{
 library(stpm)
+set.seed(123)
 #Reading the data:
 data <- simdata_cont(N=2)
 head(data)

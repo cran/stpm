@@ -63,6 +63,7 @@ A function for the model with time-dependent model parameters.
 }
 \examples{
 library(stpm)
+set.seed(123)
 #Data preparation:
 n <- 5
 data <- simdata_time_dep(N=n)
