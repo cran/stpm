@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ilya Y. Zhbannikov" />
 
-<meta name="date" content="2022-05-31" />
+<meta name="date" content="2022-09-05" />
 
 <title>Stochastic Process Model for Analysis of Longitudinal and Time-to-Event Outcomes</title>
 
@@ -387,7 +387,7 @@ pre code {
 
 <h1 class="title toc-ignore">Stochastic Process Model for Analysis of Longitudinal and Time-to-Event Outcomes</h1>
 <h4 class="author">Ilya Y. Zhbannikov</h4>
-<h4 class="date">2022-05-31</h4>
+<h4 class="date">2022-09-05</h4>
 
 </div>
 
@@ -705,48 +705,50 @@ ans &lt;- spm_continuous(dat=data,
                       theta = 0.1,
                       stopifbound = FALSE,
                       lb=c(-0.2, 60, 0.1e-6, 60, 0.1, 0.1e-5, 0.01), 
-                      ub=c(0, 140, 5e-06, 140, 3, 5e-5, 0.20))
-ans</code></pre>
+                      ub=c(0, 140, 5e-06, 140, 3, 5e-5, 0.20))</code></pre>
+<pre><code>## Parameter Q achieved lower/upper bound.
+## 1e-07</code></pre>
+<pre class="r"><code>ans</code></pre>
 <pre><code>## $a
 ##               [,1]
-## [1,] -0.1021716235
+## [1,] -0.1162438538
 ## 
 ## $f1
 ##             [,1]
-## [1,] 80.44006779
+## [1,] 79.89235683
 ## 
 ## $Q
-##                 [,1]
-## [1,] 3.858234307e-07
+##       [,1]
+## [1,] 1e-07
 ## 
 ## $f
 ##             [,1]
-## [1,] 72.10982571
+## [1,] 68.14694649
 ## 
 ## $b
-##              [,1]
-## [1,] 0.9480323775
+##             [,1]
+## [1,] 1.020281637
 ## 
 ## $mu0
-## [1] 2.149143207e-05
+## [1] 2.306354991e-05
 ## 
 ## $theta
-## [1] 0.146372252
+## [1] 0.1869785446
 ## 
 ## $status
 ## [1] 5
 ## 
 ## $LogLik
-## [1] -660.5948954
+## [1] -666.4390235
 ## 
 ## $objective
-## [1] 660.5604444
+## [1] 666.329373
 ## 
 ## $message
 ## [1] &quot;NLOPT_MAXEVAL_REACHED: Optimization stopped because maxeval (above) was reached.&quot;
 ## 
 ## $limit
-## [1] FALSE
+## [1] TRUE
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;spm.continuous&quot;</code></pre>
@@ -798,44 +800,44 @@ ans &lt;- spm_continuous(dat=data,
                            0.10))
 ans</code></pre>
 <pre><code>## $a
-##                [,1]            [,2]
-## [1,] -0.15093725674  0.001664644568
-## [2,]  0.00197532678 -0.148792208813
+##                 [,1]            [,2]
+## [1,] -0.150371240072  0.001694762871
+## [2,]  0.001978367655 -0.148013005052
 ## 
 ## $f1
 ##             [,1]
-## [1,] 106.8774537
-## [2,] 194.8962017
+## [1,] 105.1143857
+## [2,] 195.0070996
 ## 
 ## $Q
 ##                 [,1]            [,2]
-## [1,] 1.226075476e-06 1.226281156e-07
-## [2,] 1.226793880e-07 1.227885451e-06
+## [1,] 1.219326990e-06 1.207191323e-07
+## [2,] 1.211987607e-07 1.231374546e-06
 ## 
 ## $f
 ##             [,1]
-## [1,] 105.0787389
-## [2,] 204.6303638
+## [1,] 105.3331522
+## [2,] 204.7986964
 ## 
 ## $b
 ##             [,1]
-## [1,] 1.140562931
-## [2,] 1.912680217
+## [1,] 1.109383788
+## [2,] 1.961665489
 ## 
 ## $mu0
-## [1] 0.0001111659552
+## [1] 0.000110635548
 ## 
 ## $theta
-## [1] 0.07457707686
+## [1] 0.07345509905
 ## 
 ## $status
 ## [1] 5
 ## 
 ## $LogLik
-## [1] 1348.805053
+## [1] 1704.291438
 ## 
 ## $objective
-## [1] -1951.919043
+## [1] -2214.127875
 ## 
 ## $message
 ## [1] &quot;NLOPT_MAXEVAL_REACHED: Optimization stopped because maxeval (above) was reached.&quot;
@@ -902,28 +904,48 @@ opt.par</code></pre>
 ##   NA</code></pre>
 <p>As you can see, there is no parameter <span class="math inline">\(f\)</span> in <span class="math inline">\(opt.par\)</span>. This is because we set <span class="math inline">\(f=0\)</span> in <span class="math inline">\(frm\)</span>!</p>
 <p>Then, is you want to set the constraints, you must not specify the starting value (parameter <span class="math inline">\(start\)</span>) and <span class="math inline">\(lb\)</span>/<span class="math inline">\(ub\)</span> for the parameter <span class="math inline">\(f\)</span> (otherwise, the function raises an error):</p>
-<pre class="r"><code>n &lt;- 10
-data &lt;- simdata_time_dep(N=n)
-# Temporarily commented below
+<pre class="r"><code>library(stpm)
+set.seed(12345678)
+n &lt;- 10
+data &lt;- simdata_time_dep(N=n, format = &quot;long&quot;)
+
 # Estimation:
 opt.par &lt;- spm_time_dep(data, frm = list(at=&quot;a&quot;, f1t=&quot;f1&quot;, Qt=&quot;Q&quot;, ft=&quot;0&quot;, bt=&quot;b&quot;, mu0t=&quot;mu0&quot;), 
                         start=list(a=-0.05, f1=80, Q=2e-08, b=5, mu0=0.001), 
-                        lb=c(-1, 30, 1e-8, 1, 1e-6), ub=c(0, 120, 5e-8, 10, 1e-2))
-opt.par</code></pre>
+                        lb=c(-1, 30, 1e-8, 1, 1e-6), ub=c(0, 120, 5e-8, 10, 1e-2),
+                        opts=list(maxit=100), 
+                        verbose=F)</code></pre>
+<pre><code>## Warning in nloptr.add.default.options(opts.user = opts, x0 = x0,
+## num_constraints_ineq = num_constraints_ineq, : No termination criterium
+## specified, using default (relative x-tolerance = 1e-04)</code></pre>
+<pre class="r"><code>opt.par</code></pre>
 <pre><code>## $a
-## [1] -0.05
+## [1] -0.04572136589
 ## 
 ## $f1
-## [1] 80
+## [1] 84.44709945
 ## 
 ## $Q
-## [1] 2e-08
+## [1] 2.280898373e-08
 ## 
 ## $b
-## [1] 5
+## [1] 4.808318865
 ## 
 ## $mu0
-## [1] 0.001</code></pre>
+## [1] 0.0007809303061
+## 
+## $status
+## [1] 5
+## 
+## $LogLik
+##           t2 
+## -1663.057876 
+## 
+## $objective
+## [1] 1663.044784
+## 
+## $message
+## [1] &quot;NLOPT_MAXEVAL_REACHED: Optimization stopped because maxeval (above) was reached.&quot;</code></pre>
 <p>You can do the same manner if you want two or more parameters to be equal to zero.</p>
 </div>
 </div>
@@ -944,34 +966,34 @@ res &lt;- spm_con_1d(as.data.frame(dat), a=-0.05, b=2, q=1e-8, f=80, f1=90, mu0=
 <pre class="r"><code>res</code></pre>
 <pre><code>## $est
 ##               Coeff. Std. Err.   z p value
-## a     -0.05042051891       NaN NaN     NaN
-## b      4.95368016985       NaN NaN     NaN
+## a     -0.04728521931       NaN NaN     NaN
+## b      4.95976759051       NaN NaN     NaN
 ## q      0.00000000010       NaN NaN     NaN
-## f     79.99999993052       NaN NaN     NaN
-## f1    79.67871456091       NaN NaN     NaN
+## f     80.00000022085       NaN NaN     NaN
+## f1    79.59924729452       NaN NaN     NaN
 ## mu0    0.00010000000       NaN NaN     NaN
 ## theta  0.08000000000       NaN NaN     NaN
 ## 
 ## $hessian
 ##                      a                b   q                f               f1
-## a      2.675297952e+05  6.283305907e+03 NaN -1.562887391e-06  3.194937715e+00
-## b      6.283305907e+03  1.734549016e+03 NaN -2.128573103e-11  5.229535555e-09
+## a      2.842052075e+05  6.287726454e+03 NaN -6.646601422e-07  1.757357730e+01
+## b      6.287726454e+03  1.734927920e+03 NaN -1.172018113e-11  1.968805587e-08
 ## q                  NaN              NaN NaN              NaN              NaN
-## f     -1.562887391e-06 -2.128573103e-11 NaN  5.783794625e-06  4.346227451e-08
-## f1     3.194937715e+00  5.229535555e-09 NaN  4.346227451e-08  3.309451871e+00
-## mu0    1.123993491e+00  2.189275792e-02 NaN  5.435604246e-03 -4.434279628e-04
-## theta  1.585146614e-02  3.100999887e-04 NaN  4.904923279e-05 -4.183547439e-06
+## f     -6.646601422e-07 -1.172018113e-11 NaN  5.806735047e-06  3.863499026e-08
+## f1     1.757357730e+01  1.968805587e-08 NaN  3.863499026e-08  2.904332116e+00
+## mu0    1.016027068e+00  2.082976520e-02 NaN  4.246321921e-03 -2.295862825e-04
+## theta  1.430083616e-02  2.906070827e-04 NaN  3.822526766e-05 -2.025746813e-06
 ##                    mu0            theta
-## a      1.123993491e+00  1.585146614e-02
-## b      2.189275792e-02  3.100999887e-04
+## a      1.016027068e+00  1.430083616e-02
+## b      2.082976520e-02  2.906070827e-04
 ## q                  NaN              NaN
-## f      5.435604246e-03  4.904923279e-05
-## f1    -4.434279628e-04 -4.183547439e-06
-## mu0   -2.131313146e+08  1.848322797e+09
-## theta  1.848322797e+09  1.704572385e+07
+## f      4.246321921e-03  3.822526766e-05
+## f1    -2.295862825e-04 -2.025746813e-06
+## mu0   -1.898989914e+08  1.887572531e+09
+## theta  1.887572531e+09  1.744326871e+07
 ## 
 ## $lik
-## [1] 50471.63876
+## [1] 50656.62289
 ## 
 ## $con
 ## [1] 4
@@ -1003,13 +1025,13 @@ res &lt;- spm_con_1d(as.data.frame(dat), a=-0.05, b=2, q=1e-8, f=80, f1=90, mu0=
 <pre class="r"><code>library(stpm)
 data &lt;- simdata_discr(N=10)
 head(data)</code></pre>
-<pre><code>##   id xi t1 t2          y1      y1.next
-## 1  1  0 30 31 78.37568207  80.14572528
-## 2  1  0 31 32 80.14572528  90.89021177
-## 3  1  0 32 33 90.89021177  85.35114798
-## 4  1  0 33 34 85.35114798  89.35097104
-## 5  1  0 34 35 89.35097104  98.87706896
-## 6  1  0 35 36 98.87706896 100.91052534</code></pre>
+<pre><code>##   id xi t1 t2          y1     y1.next
+## 1  1  0 30 31 76.72988949 90.09455399
+## 2  1  0 31 32 90.09455399 91.33518318
+## 3  1  0 32 33 91.33518318 94.66502736
+## 4  1  0 33 34 94.66502736 90.56756062
+## 5  1  0 34 35 90.56756062 90.94216518
+## 6  1  0 35 36 90.94216518 96.92507293</code></pre>
 </div>
 <div id="continuous-time-simulation" class="section level3">
 <h3>Continuous-time simulation</h3>
@@ -1031,13 +1053,13 @@ head(data)</code></pre>
 <pre class="r"><code>library(stpm)
 data &lt;- simdata_cont(N=10)
 head(data)</code></pre>
-<pre><code>##   id xi          t1          t2          y1     y1.next
-## 1  0  0 37.32465961 39.21089196 78.83923290 78.60497011
-## 2  0  0 39.21089196 40.73386605 78.60497011 78.82752695
-## 3  0  0 40.73386605 41.78966292 78.82752695 78.45734388
-## 4  0  0 41.78966292 43.49786515 78.45734388 76.33148060
-## 5  0  0 43.49786515 45.01146966 76.33148060 72.53230450
-## 6  0  0 45.01146966 46.32764222 72.53230450 63.88171410</code></pre>
+<pre><code>##   id xi          t1          t2          y1      y1.next
+## 1  0  0 33.55365299 34.72824423 78.74051630  82.73685625
+## 2  0  0 34.72824423 36.04201013 82.73685625  86.14131099
+## 3  0  0 36.04201013 37.05205751 86.14131099  92.98495900
+## 4  0  0 37.05205751 38.74860222 92.98495900  93.42421795
+## 5  0  0 38.74860222 40.36727874 93.42421795  97.79917509
+## 6  0  0 40.36727874 41.78302970 97.79917509 107.44126009</code></pre>
 </div>
 </div>
 <div id="spm-with-partially-observed-covariates" class="section level2">
@@ -1050,12 +1072,12 @@ head(data)</code></pre>
 data &lt;- sim_pobs(N=10)
 head(data)</code></pre>
 <pre><code>##   id xi          t1          t2 Z          y1     y1.next
-## 1  0  0 59.31488727 60.34278590 0 78.48691974 85.37612372
-## 2  0  0 60.34278590 61.29360276 0 85.37612372 74.07415518
-## 3  0  0 61.29360276 62.31176143 0 74.07415518 82.04855154
-## 4  0  0 62.31176143 63.30138311 0 82.04855154 71.59308147
-## 5  0  0 63.30138311 64.38932967 0 71.59308147 73.10168234
-## 6  0  0 64.38932967 65.39889616 0 73.10168234 66.49071358</code></pre>
+## 1  0  0 42.60856507 43.54631015 0 79.46890355 80.13789316
+## 2  0  0 43.54631015 44.53389011 0 80.13789316 77.49058422
+## 3  0  0 44.53389011 45.58949121 0 77.49058422 75.51496225
+## 4  0  0 45.58949121 46.66869639 0 75.51496225 68.82093006
+## 5  0  0 46.66869639 47.58379891 0 68.82093006 66.42902739
+## 6  0  0 47.58379891 48.55247453 0 66.42902739 69.48593288</code></pre>
 <p>In the specification of the SPM described in 2007 paper by Yashin and colleagues <span class="citation">(Yashin, Arbeev, Akushevich, et al. 2007)</span> the stochastic differential equation describing the age dynamics of a physiological variable (a dynamic component of the model) is:</p>
 <p><span class="math inline">\(dY(t) = a(Z, t)(Y(t) - f1(Z, t))dt + b(Z, t)dW(t), Y(t = t_0)\)</span></p>
 <p>Here in this equation, <span class="math inline">\(Y(t)\)</span> is a <span class="math inline">\(k \times 1\)</span> matrix, where <span class="math inline">\(k\)</span> is a number of covariates, which is a model dimension) describing the value of a physiological variable at a time (e.g. age) t. <span class="math inline">\(f_1(Z,t)\)</span> is a <span class="math inline">\(k \times 1\)</span> matrix that corresponds to the long-term average value of the stochastic process <span class="math inline">\(Y(t)\)</span>, which describes a trajectory of individual variable influenced by different factors represented by a random Wiener process <span class="math inline">\(W(t)\)</span>. The negative feedback coefficient <span class="math inline">\(a(Z,t)\)</span> (<span class="math inline">\(k \times k\)</span> matrix) characterizes the rate at which the stochastic process goes to its mean. In research on aging and well-being, <span class="math inline">\(f_1(Z,t)\)</span> represents the average allostatic trajectory and <span class="math inline">\(a(t)\)</span> in this case represents the adaptive capacity of the organism. Coefficient <span class="math inline">\(b(Z,t)\)</span> (<span class="math inline">\(k \times 1\)</span> matrix) characterizes a strength of the random disturbances from Wiener process <span class="math inline">\(W(t)\)</span>. All of these parameters depend on <span class="math inline">\(Z\)</span> (a genetic marker having values 1 or 0). The following function <span class="math inline">\(\mu(t,Y(t))\)</span> represents a hazard rate:</p>
@@ -1066,74 +1088,72 @@ head(data)</code></pre>
 data &lt;- sim_pobs(N=10)
 head(data)</code></pre>
 <pre><code>##   id xi          t1          t2 Z          y1     y1.next
-## 1  0  0 91.15401210 92.21965967 0 81.36255177 79.33769707
-## 2  0  0 92.21965967 93.16039286 0 79.33769707 84.88844550
-## 3  0  0 93.16039286 94.11000198 0 84.88844550 84.66125367
-## 4  0  0 94.11000198 95.17582943 0 84.66125367 88.37073761
-## 5  0  0 95.17582943 96.19965652 0 88.37073761 92.67507043
-## 6  0  0 96.19965652 97.25163375 0 92.67507043 97.88009840</code></pre>
+## 1  0  0 60.43522445 61.35490666 0 79.92975032 76.33666649
+## 2  0  0 61.35490666 62.42486745 0 76.33666649 76.55228226
+## 3  0  0 62.42486745 63.32906272 0 76.55228226 86.59959121
+## 4  0  0 63.32906272 64.40859637 0 86.59959121 91.24608750
+## 5  0  0 64.40859637 65.37821039 0 91.24608750 86.17621957
+## 6  0  0 65.37821039 66.43843309 0 86.17621957 80.94748698</code></pre>
 <pre class="r"><code>#Parameters estimation:
-pars &lt;- spm_pobs(x=data)</code></pre>
-<pre><code>## Parameter mu0L achieved lower/upper bound.
-## 9e-06</code></pre>
-<pre class="r"><code>pars</code></pre>
+pars &lt;- spm_pobs(x=data)
+pars</code></pre>
 <pre><code>## $aH
 ##                [,1]
-## [1,] -0.04795259246
+## [1,] -0.05221059994
 ## 
 ## $aL
 ##                [,1]
-## [1,] -0.01099943278
+## [1,] -0.01086988917
 ## 
 ## $f1H
 ##             [,1]
-## [1,] 61.23900359
+## [1,] 59.29492659
 ## 
 ## $f1L
 ##             [,1]
-## [1,] 72.00524129
+## [1,] 76.82412031
 ## 
 ## $QH
 ##                 [,1]
-## [1,] 1.680364984e-08
+## [1,] 2.173260802e-08
 ## 
 ## $QL
 ##                 [,1]
-## [1,] 2.240941098e-08
+## [1,] 2.404768776e-08
 ## 
 ## $fH
 ##             [,1]
-## [1,] 64.05396857
+## [1,] 61.91026501
 ## 
 ## $fL
 ##             [,1]
-## [1,] 76.44837581
+## [1,] 81.51327953
 ## 
 ## $bH
 ##             [,1]
-## [1,] 4.024384937
+## [1,] 3.628298374
 ## 
 ## $bL
 ##             [,1]
-## [1,] 4.892744211
+## [1,] 5.131722152
 ## 
 ## $mu0H
-## [1] 7.282797918e-06
+## [1] 8.723121794e-06
 ## 
 ## $mu0L
-## [1] 9e-06
+## [1] 9.008470832e-06
 ## 
 ## $thetaH
-## [1] 0.07235009977
+## [1] 0.07398114409
 ## 
 ## $thetaL
-## [1] 0.09
+## [1] 0.09007986209
 ## 
 ## $p
-## [1] 0.2295535296
+## [1] 0.2275224063
 ## 
 ## $limit
-## [1] TRUE
+## [1] FALSE
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;pobs.spm&quot;</code></pre>
@@ -1143,83 +1163,81 @@ pars &lt;- spm_pobs(x=data)</code></pre>
 data.genetic &lt;- sim_pobs(N=5, mode=&#39;observed&#39;)
 head(data.genetic)</code></pre>
 <pre><code>##   id xi          t1          t2 Z          y1     y1.next
-## 1  0  0 52.84443870 53.85097898 0 80.89977188 83.19630112
-## 2  0  0 53.85097898 54.78242384 0 83.19630112 80.25782131
-## 3  0  0 54.78242384 55.72679338 0 80.25782131 86.44334846
-## 4  0  0 55.72679338 56.79405094 0 86.44334846 97.88669379
-## 5  0  0 56.79405094 57.69972449 0 97.88669379 94.65498786
-## 6  0  0 57.69972449 58.72380119 0 94.65498786 99.17243895</code></pre>
+## 1  0  0 48.23854222 49.15756343 0 80.53200283 79.41837738
+## 2  0  0 49.15756343 50.13602914 0 79.41837738 87.01018905
+## 3  0  0 50.13602914 51.13998235 0 87.01018905 92.19099604
+## 4  0  0 51.13998235 52.04271033 0 92.19099604 88.25306909
+## 5  0  0 52.04271033 53.03533207 0 88.25306909 84.70535708
+## 6  0  0 53.03533207 54.03207848 0 84.70535708 74.83127361</code></pre>
 <pre class="r"><code>data.nongenetic &lt;- sim_pobs(N=10, mode=&#39;unobserved&#39;)
 head(data.nongenetic)</code></pre>
 <pre><code>##   id xi          t1          t2          y1     y1.next
-## 1  0  0 58.97322021 59.92391381 81.25664113 79.44120006
-## 2  0  0 59.92391381 60.86036779 79.44120006 69.59782970
-## 3  0  0 60.86036779 61.94182249 69.59782970 61.99190512
-## 4  0  0 61.94182249 62.97351575 61.99190512 60.87646177
-## 5  0  0 62.97351575 63.92779874 60.87646177 64.14649756
-## 6  0  0 63.92779874 64.95188836 64.14649756 53.97920321</code></pre>
+## 1  0  0 65.79418095 66.78746433 81.35063444 75.86832421
+## 2  0  0 66.78746433 67.84482489 75.86832421 74.75148863
+## 3  0  0 67.84482489 68.92627769 74.75148863 69.03274169
+## 4  0  0 68.92627769 69.83835934 69.03274169 70.07873222
+## 5  0  0 69.83835934 70.82032656 70.07873222 66.51917477
+## 6  0  0 70.82032656 71.79690020 66.51917477 71.03487617</code></pre>
 <pre class="r"><code>#Parameters estimation:
-pars &lt;- spm_pobs(x=data.genetic, y = data.nongenetic, mode=&#39;combined&#39;)</code></pre>
-<pre><code>## Parameter fH achieved lower/upper bound.
-## 66</code></pre>
-<pre class="r"><code>pars</code></pre>
+pars &lt;- spm_pobs(x=data.genetic, y = data.nongenetic, mode=&#39;combined&#39;)
+pars</code></pre>
 <pre><code>## $aH
 ##                [,1]
-## [1,] -0.05038474709
+## [1,] -0.04899015454
 ## 
 ## $aL
 ##                [,1]
-## [1,] -0.01023813814
+## [1,] -0.01098688742
 ## 
 ## $f1H
 ##             [,1]
-## [1,] 56.48646989
+## [1,] 54.84681361
 ## 
 ## $f1L
-##             [,1]
-## [1,] 87.91714119
+##            [,1]
+## [1,] 82.2075927
 ## 
 ## $QH
 ##                 [,1]
-## [1,] 1.651970204e-08
+## [1,] 2.195962134e-08
 ## 
 ## $QL
 ##                 [,1]
-## [1,] 2.606859538e-08
+## [1,] 2.578243881e-08
 ## 
 ## $fH
-##      [,1]
-## [1,]   66
+##             [,1]
+## [1,] 55.13856896
 ## 
 ## $fL
 ##             [,1]
-## [1,] 83.61105956
+## [1,] 87.53707199
 ## 
 ## $bH
-##            [,1]
-## [1,] 4.38852204
+##             [,1]
+## [1,] 3.722342404
 ## 
 ## $bL
 ##             [,1]
-## [1,] 5.133226046
+## [1,] 5.023189245
 ## 
 ## $mu0H
-## [1] 7.611760398e-06
+## [1] 8.784418358e-06
 ## 
 ## $mu0L
-## [1] 9.008979879e-06
+## [1] 9.000479634e-06
 ## 
 ## $thetaH
-## [1] 0.07288271682
+## [1] 0.07200528353
 ## 
 ## $thetaL
-## [1] 0.09006074495
+## [1] 0.0900005526
 ## 
 ## $p
-## [1] 0.2455866161
+## [1] 0.2714572645
 ## 
 ## $limit
-## [1] TRUE
+## [1] FALSE
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;pobs.spm&quot;</code></pre>
@@ -1356,21 +1374,21 @@ imp.data &lt;- spm.impute(x=incomplete.data, id=1, case=&quot;xi&quot;, t1=3, co
 ##### Look at the incomplete data with missings #####
 head(incomplete.data)</code></pre>
 <pre><code>##   id xi  t          y1
-## 1  1  0 30 83.17665677
-## 2  1  0 32 85.35850084
-## 3  1  0 34 78.87696269
-## 4  1  0 36 77.25905345
-## 5  1  0 38 72.27155840
+## 1  1  0 30 82.07656260
+## 2  1  0 32 78.21157461
+## 3  1  0 34          NA
+## 4  1  0 36 68.51273186
+## 5  1  0 38 72.56533923
 ## 6  1  0 40          NA</code></pre>
 <pre class="r"><code>##### Look at the imputed data #####
 head(imp.data)</code></pre>
 <pre><code>##   id xi  t          y1
-## 1  1  0 30 83.17665677
-## 2  1  0 32 85.35850084
-## 3  1  0 34 78.87696269
-## 4  1  0 36 77.25905345
-## 5  1  0 38 72.27155840
-## 6  1  0 40 72.63964208</code></pre>
+## 1  1  0 30 82.07656260
+## 2  1  0 32 78.21157461
+## 3  1  0 34 78.38950154
+## 4  1  0 36 68.51273186
+## 5  1  0 38 72.56533923
+## 6  1  0 40 73.01533970</code></pre>
 <pre class="r"><code>#########################################################
 ################ Two-dimensional case ###################
 #########################################################
@@ -1403,21 +1421,21 @@ imp.data &lt;- spm.impute(x=incomplete.data, id=1, case=&quot;xi&quot;, t1=3, co
 ###### Look at the incomplete data with missings #####
 head(incomplete.data)</code></pre>
 <pre><code>##   id xi  t          y1          y2
-## 1  1  0 30 72.11169404 27.33882354
-## 2  1  0 32 67.63158526 27.77865814
-## 3  1  0 34 63.09629646 29.49861518
-## 4  1  0 36 66.90660336 33.76277091
-## 5  1  0 38 67.11457685 33.68933156
-## 6  1  0 40 71.43534015 34.73774375</code></pre>
+## 1  1  0 30 81.33522205 22.82389494
+## 2  1  0 32 90.25707847          NA
+## 3  1  0 34          NA          NA
+## 4  1  0 36 87.94061016 23.22128375
+## 5  1  0 38 87.19685070 29.43091772
+## 6  1  0 40 95.10697984          NA</code></pre>
 <pre class="r"><code>###### Look at the imputed data #####
 head(imp.data)</code></pre>
 <pre><code>##   id xi  t          y1          y2
-## 1  1  0 30 72.11169404 27.33882354
-## 2  1  0 32 67.63158526 27.77865814
-## 3  1  0 34 63.09629646 29.49861518
-## 4  1  0 36 66.90660336 33.76277091
-## 5  1  0 38 67.11457685 33.68933156
-## 6  1  0 40 71.43534015 34.73774375</code></pre>
+## 1  1  0 30 81.33522205 22.82389494
+## 2  1  0 32 90.25707847 22.89880634
+## 3  1  0 34 90.21374425 23.04351001
+## 4  1  0 36 87.94061016 23.22128375
+## 5  1  0 38 87.19685070 29.43091772
+## 6  1  0 40 95.10697984 29.22900829</code></pre>
 </div>
 <div id="prediction" class="section level2">
 <h2>Prediction</h2>
